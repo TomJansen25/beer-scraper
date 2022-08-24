@@ -18,6 +18,7 @@ class BeyondBeerSpider(scrapy.Spider):
             "https://www.beyondbeer.de/brown-ale/",
             "https://www.beyondbeer.de/cider/",
             "https://www.beyondbeer.de/hefeweizen/",
+            "https://www.beyondbeer.de/helles/",
             "https://www.beyondbeer.de/ipa/",
             "https://www.beyondbeer.de/lager-bier/",
             "https://www.beyondbeer.de/pale-ale/",
@@ -37,6 +38,8 @@ class BeyondBeerSpider(scrapy.Spider):
         logger.info(f"Crawling {response.url}!")
 
         products = response.xpath('//div[@class="product--box box--minimal"]')
+        logger.info(f"Found {len(products)} products on page, starting to crawl...")
+        success_counter = 0
 
         for product in products:
 
@@ -46,6 +49,9 @@ class BeyondBeerSpider(scrapy.Spider):
                 './/div[@class="product--info"]//a//span//span//img/@srcset'
             ).get()
             image_url = images.split(", ")[0] if images else None
+
+            availability = product.xpath(".//span[@class='buy-btn--cart-add']")
+            available = bool(availability)
 
             original_price = product.css("span.price--discount::text").get()
             on_sale = bool(original_price)
@@ -60,6 +66,7 @@ class BeyondBeerSpider(scrapy.Spider):
             loader.add_value("scraped_from_url", response.url)
 
             loader.add_xpath("name", './/a[@class="product--title"]/@title')
+            loader.add_value("available", available)
 
             loader.add_css(
                 "price_eur", "div.product--price > span.price--default::text"
@@ -75,8 +82,12 @@ class BeyondBeerSpider(scrapy.Spider):
             loader.add_value("original_price", original_price)
 
             yield loader.load_item()
+            success_counter += 1
 
-        logger.info(f"Finished crawling {response.url}")
+        logger.info(
+            f"Finished crawling {response.url}. Successfully crawled {success_counter} products!"
+        )
+
         # Recursively follow the link to the next page, extracting data from it
         next_page = response.css("a.paging--next").attrib.get("href")
         if next_page is not None:
@@ -85,5 +96,4 @@ class BeyondBeerSpider(scrapy.Spider):
             next_page = f"{current_page}?{next_page_number}"
 
             logger.info(f"Found another page, moving to: {next_page}")
-
             yield response.follow(next_page, callback=self.parse)

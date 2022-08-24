@@ -1,4 +1,5 @@
 import scrapy
+from loguru import logger
 
 from beerspider.items import ProductItemLoader
 
@@ -38,9 +39,11 @@ class BierothekSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response, **kwargs):
-        print(f"Crawling {response.url}!")
+        logger.info(f"Crawling {response.url}!")
 
         products = response.css("div.article_entry")
+        logger.info(f"Found {len(products)} products on page {response.url}, starting to crawl...")
+        success_counter = 0
 
         for product in products:
             try:
@@ -50,8 +53,8 @@ class BierothekSpider(scrapy.Spider):
                 if any(n in name.lower() for n in ["paket", "package", "box"]):
                     continue
 
-                if product.xpath('.//div[contains(@class, "out-of-stock")]').get():
-                    continue
+                not_available = product.xpath('.//div[contains(@class, "out-of-stock")]').get()
+                available = not bool(not_available)
 
                 product_url = product.xpath(
                     './/div[contains(@class, "product-item")]//a/@href'
@@ -83,6 +86,7 @@ class BierothekSpider(scrapy.Spider):
                 loader.add_value("scraped_from_url", response.url)
 
                 loader.add_value("name", name)
+                loader.add_value("available", available)
 
                 loader.add_xpath("price_eur", './/div[@class="price"]//span/text()')
                 loader.add_value("volume_liter", volume)
@@ -95,9 +99,12 @@ class BierothekSpider(scrapy.Spider):
                 )
 
                 yield loader.load_item()
+                success_counter += 1
 
             except Exception as e:
                 self.logger.error(f"ERROR.. The following error occurred: {e}")
-                print(f"Error {e} occurred...")
+                logger.error(f"Error {e} occurred...")
 
-        print(f"Finished crawling {response.url}")
+        logger.info(
+            f"Finished crawling {response.url}. Successfully crawled {success_counter} products!"
+        )

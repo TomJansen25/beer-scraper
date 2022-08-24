@@ -1,4 +1,5 @@
 from scrapy import Request, Spider
+from loguru import logger
 
 from beerspider.items import ProductItemLoader
 
@@ -21,9 +22,11 @@ class BiermarketSpider(Spider):
             yield Request(url=url, callback=self.parse)
 
     def parse(self, response, **kwargs):
-        print(f"Crawling {response.url}!")
+        logger.info(f"Crawling {response.url}!")
 
         products = response.css("div.product-box")
+        logger.info(f"Found {len(products)} products on page, starting to crawl...")
+        success_counter = 0
 
         for product in products:
             try:
@@ -41,10 +44,10 @@ class BiermarketSpider(Spider):
                     continue
 
                 # Check whether the product is available and can be ordered
-                if product.xpath(
+                not_available = product.xpath(
                     './/button[contains(@class, "webing-do-nothing")]'
-                ).get():
-                    continue
+                ).get()
+                available = not bool(not_available)
 
                 sale = product.xpath('.//div[contains(@class, "badge-discount")]').get()
                 on_sale = bool(sale)
@@ -71,6 +74,7 @@ class BiermarketSpider(Spider):
                 loader.add_value("scraped_from_url", response.url)
 
                 loader.add_value("name", name)
+                loader.add_value("available", available)
 
                 volume = (
                     products[4]
@@ -90,12 +94,15 @@ class BiermarketSpider(Spider):
                 loader.add_value("discount", discount)
 
                 yield loader.load_item()
+                success_counter += 1
 
             except Exception as e:
                 self.logger.error(f"ERROR.. The following error occurred: {e}")
-                print(f"Error {e} occurred...")
+                logger.error(f"Error {e} occurred...")
 
-        print(f"Finished crawling {response.url}")
+        logger.info(
+            f"Finished crawling {response.url}. Successfully crawled {success_counter} products!"
+        )
         # Recursively follow the link to the next page, extracting data from it
         next_page = response.xpath('.//li[@class="page-item page-next"]').get()
         if next_page is not None:
@@ -106,5 +113,5 @@ class BiermarketSpider(Spider):
                 f"https://www.biermarket.de/bier/?order=topseller&p={next_page_number}"
             )
 
-            print(f"Found another page, moving to: {next_page}")
+            logger.info(f"Found another page, moving to: {next_page}")
             yield response.follow(next_page, callback=self.parse)
