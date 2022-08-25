@@ -1,4 +1,5 @@
 import scrapy
+from loguru import logger
 
 from beerspider.items import ProductItemLoader
 
@@ -39,78 +40,89 @@ class BierSelectSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response, **kwargs):
-        print(f"Crawling {response.url}!")
+        logger.info(f"Crawling {response.url}!")
 
         products = response.css("div.product-wrapper")
+        logger.info(f"Found {len(products)} products on page {response.url}, starting to crawl...")
+        success_counter = 0
 
         for product in products:
+            try:
+                loader = ProductItemLoader(selector=product)
 
-            loader = ProductItemLoader(selector=product)
+                name = product.xpath('.//div[@class="caption"]//h4//a/text()').get()
+                # Skip this beer if it is a package
+                if "paket" in name.lower():
+                    continue
 
-            name = product.xpath('.//div[@class="caption"]//h4//a/text()').get()
-            # Skip this beer if it is a package
-            if "paket" in name.lower():
-                continue
+                availability = product.xpath(
+                    './/div[@class="delivery-status"]//div//small/text()'
+                ).get()
+                available = True
+                if availability == "momentan nicht verfügbar":
+                    available = False
 
-            availability = product.xpath(
-                './/div[@class="delivery-status"]//div//small/text()'
-            ).get()
-            # Check whether product is available, and if not skip product
-            if availability == "momentan nicht verfügbar":
-                continue
+                prices = product.xpath(
+                    './/strong[@class="price text-nowrap"]//span/text()'
+                ).getall()
 
-            prices = product.xpath(
-                './/strong[@class="price text-nowrap"]//span/text()'
-            ).getall()
+                if len(prices) == 2:
+                    on_sale, original_price = False, None
+                elif len(prices) > 2 and prices[1] == "%":
+                    on_sale, original_price = True, prices[3]
+                else:
+                    self.logger.warning(
+                        "Could not figure out whether product on sale or not. Product will be ignored."
+                    )
+                    continue
 
-            if len(prices) == 2:
-                on_sale, original_price = False, None
-            elif len(prices) > 2 and prices[1] == "%":
-                on_sale, original_price = True, prices[3]
-            else:
-                self.logger.warning(
-                    "Could not figure out whether product on sale or not. Product will be ignored."
+                volume = product.xpath(
+                    './/div[@class="base_price text-nowrap"]/text()'
+                ).getall()[2]
+
+                loader.add_value("vendor", self.name)
+                loader.add_value(
+                    "style",
+                    response.url.split("/")[-1]
+                    .replace("_1", "")
+                    .replace("_s2", "")
+                    .replace("_s3", ""),
                 )
-                continue
 
-            volume = product.xpath(
-                './/div[@class="base_price text-nowrap"]/text()'
-            ).getall()[2]
+                loader.add_xpath("product_url", './/div[@class="caption"]//meta/@content')
+                loader.add_xpath(
+                    "image_url", './/div[@class="image-content"]//meta/@content'
+                )
 
-            loader.add_value("vendor", self.name)
-            loader.add_value(
-                "style",
-                response.url.split("/")[-1]
-                .replace("_1", "")
-                .replace("_s2", "")
-                .replace("_s3", ""),
-            )
+                loader.add_value("scraped_from_url", response.url)
 
-            loader.add_xpath("product_url", './/div[@class="caption"]//meta/@content')
-            loader.add_xpath(
-                "image_url", './/div[@class="image-content"]//meta/@content'
-            )
+                loader.add_value("name", name)
+                loader.add_value("available", available)
 
-            loader.add_value("scraped_from_url", response.url)
+                loader.add_xpath(
+                    "price_eur", './/strong[@class="price text-nowrap"]//span[1]/text()'
+                )
+                loader.add_value("volume_liter", volume)
+                loader.add_xpath(
+                    "price_eur_per_liter", './/span[@class="value hidden-xs"]/text()'
+                )
 
-            loader.add_value("name", name)
+                loader.add_value("on_sale", on_sale)
+                loader.add_value("original_price", original_price)
 
-            loader.add_xpath(
-                "price_eur", './/strong[@class="price text-nowrap"]//span[1]/text()'
-            )
-            loader.add_value("volume_liter", volume)
-            loader.add_xpath(
-                "price_eur_per_liter", './/span[@class="value hidden-xs"]/text()'
-            )
+                yield loader.load_item()
+                success_counter += 1
 
-            loader.add_value("on_sale", on_sale)
-            loader.add_value("original_price", original_price)
+            except Exception as e:
+                self.logger.error(f"ERROR.. The following error occurred: {e}")
+                logger.error(f"Error {e} occurred...")
 
-            yield loader.load_item()
+        logger.info(
+            f"Finished crawling {response.url}. Successfully crawled {success_counter} products!"
+        )
 
-        print(f"Finished crawling {response.url}")
         # Recursively follow the link to the next page, extracting data from it
         next_page = response.css("li.next > a").attrib.get("href")
         if next_page is not None:
-            print(f"Found another page, moving to: {next_page}")
+            logger.info(f"Found another page, moving to: {next_page}")
             yield response.follow(next_page, callback=self.parse)

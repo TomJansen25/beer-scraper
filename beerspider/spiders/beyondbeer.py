@@ -35,54 +35,58 @@ class BeyondBeerSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response, **kwargs):
-        logger.info(f"Crawling {response.url}!")
+        logger.info(f"Crawling {response.url}...")
 
         products = response.xpath('//div[@class="product--box box--minimal"]')
-        logger.info(f"Found {len(products)} products on page, starting to crawl...")
+        logger.info(f"Found {len(products)} products on page {response.url}, starting to crawl...")
         success_counter = 0
 
         for product in products:
+            try:
+                loader = ProductItemLoader(selector=product)
 
-            loader = ProductItemLoader(selector=product)
+                images = product.xpath(
+                    './/div[@class="product--info"]//a//span//span//img/@srcset'
+                ).get()
+                image_url = images.split(", ")[0] if images else None
 
-            images = product.xpath(
-                './/div[@class="product--info"]//a//span//span//img/@srcset'
-            ).get()
-            image_url = images.split(", ")[0] if images else None
+                availability = product.xpath(".//span[@class='buy-btn--cart-add']")
+                available = bool(availability)
 
-            availability = product.xpath(".//span[@class='buy-btn--cart-add']")
-            available = bool(availability)
+                original_price = product.css("span.price--discount::text").get()
+                on_sale = bool(original_price)
 
-            original_price = product.css("span.price--discount::text").get()
-            on_sale = bool(original_price)
+                loader.add_value("vendor", self.name)
+                loader.add_xpath("brewery", './/h3[@class="supplier--name"]/text()')
+                loader.add_css("style", "h2.product--style::text")
 
-            loader.add_value("vendor", self.name)
-            loader.add_xpath("brewery", './/h3[@class="supplier--name"]/text()')
-            loader.add_css("style", "h2.product--style::text")
+                loader.add_xpath("product_url", './/div[@class="product--info"]//a/@href')
+                loader.add_value("image_url", image_url)
 
-            loader.add_xpath("product_url", './/div[@class="product--info"]//a/@href')
-            loader.add_value("image_url", image_url)
+                loader.add_value("scraped_from_url", response.url)
 
-            loader.add_value("scraped_from_url", response.url)
+                loader.add_xpath("name", './/a[@class="product--title"]/@title')
+                loader.add_value("available", available)
 
-            loader.add_xpath("name", './/a[@class="product--title"]/@title')
-            loader.add_value("available", available)
+                loader.add_css(
+                    "price_eur", "div.product--price > span.price--default::text"
+                )
+                loader.add_xpath(
+                    "volume_liter", './/div[@class="price--unit"]//span[2]/text()'
+                )
+                loader.add_xpath(
+                    "price_eur_per_liter", './/div[@class="price--unit"]//span[3]/text()'
+                )
 
-            loader.add_css(
-                "price_eur", "div.product--price > span.price--default::text"
-            )
-            loader.add_xpath(
-                "volume_liter", './/div[@class="price--unit"]//span[2]/text()'
-            )
-            loader.add_xpath(
-                "price_eur_per_liter", './/div[@class="price--unit"]//span[3]/text()'
-            )
+                loader.add_value("on_sale", on_sale)
+                loader.add_value("original_price", original_price)
 
-            loader.add_value("on_sale", on_sale)
-            loader.add_value("original_price", original_price)
+                yield loader.load_item()
+                success_counter += 1
 
-            yield loader.load_item()
-            success_counter += 1
+            except Exception as e:
+                self.logger.error(f"ERROR.. The following error occurred: {e}")
+                logger.error(f"Error {e} occurred...")
 
         logger.info(
             f"Finished crawling {response.url}. Successfully crawled {success_counter} products!"

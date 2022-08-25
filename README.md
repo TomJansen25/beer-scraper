@@ -20,6 +20,12 @@ Project to scrape German beer vendors finding the best deals and cheapest option
 * [Beertasting](https://www.beertasting.com/de-de) - __In progress__
 
 
+### Current TODOs:
+* Implement playwright/scrapy_playwright for dynamic content
+* Fix craftbeer-shop.com paging (no longer through link but dynamic link click)
+* ...
+
+
 ### Run scrapers:
 ```shell
 cd $HOME/beer-scraper/
