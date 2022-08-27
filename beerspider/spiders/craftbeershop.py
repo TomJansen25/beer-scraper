@@ -1,4 +1,5 @@
 import scrapy
+from loguru import logger
 
 from beerspider.items import ProductItemLoader
 
@@ -49,49 +50,66 @@ class CraftbeerShopSpider(scrapy.Spider):
 
     def parse(self, response, **kwargs):
         page = response.url.split("/")[-1]
-        print(f"Crawling {response.url}!")
+        logger.info(f"Crawling {response.url}...")
 
         products = response.css("div.product-cell__wrapper")
+        logger.info(f"Found {len(products)} products on page {response.url}, starting to crawl...")
+        success_counter = 0
 
         for product in products:
-            loader = ProductItemLoader(selector=product)
+            try:
+                loader = ProductItemLoader(selector=product)
 
-            title = (
-                product.css("div.product-cell__title-wrapper")
-                .css("h4.product-cell__title")
-                .css("a::text")
-                .get()
-            )
-            full_name = " ".join(title.split(" ")[:-1])
-            volume = title.split(" ")[-1]
+                title = (
+                    product.css("div.product-cell__title-wrapper")
+                    .css("h4.product-cell__title")
+                    .css("a::text")
+                    .get()
+                )
+                full_name = " ".join(title.split(" ")[:-1])
+                volume = title.split(" ")[-1]
 
-            discount = product.xpath(
-                './/div[@class="am-discount__label"]//span/text()'
-            ).get()
-            on_sale = bool(discount)
+                availability = product.xpath(
+                    ".//button[contains(@class, 'product-cell__add-to-basket-button')]"
+                ).get()
+                available = bool(availability)
 
-            loader.add_value("brewery", "")
-            loader.add_value("name", full_name)
-            loader.add_value("vendor", self.name)
-            loader.add_value("style", page)
-            loader.add_xpath(
-                "image_url", './/div[@class="image-content"]//meta/@content'
-            )
-            loader.add_xpath(
-                "product_url",
-                './/div[@class="product-cell__caption caption text-center"]//meta/@content',
-            )
-            loader.add_value("scraped_from_url", response.url)
-            loader.add_value("description", "")
-            loader.add_css("price_eur", "div.price_wrapper > strong > span::text")
-            loader.add_value("volume_liter", volume)
-            loader.add_css("price_eur_per_liter", "div.base_price > span::text")
-            loader.add_value("on_sale", on_sale)
-            loader.add_value("discount", discount)
+                discount = product.xpath(
+                    './/div[@class="am-discount__label"]//span/text()'
+                ).get()
+                on_sale = bool(discount)
 
-            yield loader.load_item()
+                loader.add_value("brewery", "")
+                loader.add_value("name", full_name)
+                loader.add_value("available", available)
+                loader.add_value("vendor", self.name)
+                loader.add_value("style", page)
+                loader.add_xpath(
+                    "image_url", './/div[@class="image-content"]//meta/@content'
+                )
+                loader.add_xpath(
+                    "product_url",
+                    './/div[@class="product-cell__caption caption text-center"]//meta/@content',
+                )
+                loader.add_value("scraped_from_url", response.url)
+                loader.add_value("description", "")
+                loader.add_css("price_eur", "div.price_wrapper > strong > span::text")
+                loader.add_value("volume_liter", volume)
+                loader.add_css("price_eur_per_liter", "div.base_price > span::text")
+                loader.add_value("on_sale", on_sale)
+                loader.add_value("discount", discount)
 
-        print(f"Finished crawling {response.url}")
+                yield loader.load_item()
+                success_counter += 1
+
+            except Exception as e:
+                self.logger.error(f"ERROR.. The following error occurred: {e}")
+                logger.error(f"Error {e} occurred...")
+
+        logger.info(
+            f"Finished crawling {response.url}. Successfully crawled {success_counter} products!"
+        )
+
         # Recursively follow the link to the next page, extracting data from it
         next_page = response.css("li.next > a").attrib.get("href")
         if next_page is not None:

@@ -11,6 +11,8 @@ SQLAlchemy = "^1.4.31"
 price-parser = "^0.3.4"
 numpy = "^1.22.1"
 loguru = "^0.6.0"
+playwright = "^1.25.2"
+scrapy-playwright = "^0.0.21"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.12.2"
