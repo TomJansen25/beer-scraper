@@ -38,7 +38,8 @@ class BeyondBeerSpider(scrapy.Spider):
         logger.info(f"Crawling {response.url}...")
 
         products = response.xpath('//div[@class="product--box box--minimal"]')
-        logger.info(f"Found {len(products)} products on page {response.url}, starting to crawl...")
+        num_products = len(products)
+        logger.info(f"Found {num_products} products on page {response.url}, starting to crawl...")
         success_counter = 0
 
         for product in products:
@@ -89,7 +90,8 @@ class BeyondBeerSpider(scrapy.Spider):
                 logger.error(f"Error {e} occurred...")
 
         logger.info(
-            f"Finished crawling {response.url}. Successfully crawled {success_counter} products!"
+            f"Finished crawling {response.url}. Successfully crawled {success_counter} "
+            f"out of {num_products} products!"
         )
 
         # Recursively follow the link to the next page, extracting data from it

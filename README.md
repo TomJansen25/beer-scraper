@@ -13,7 +13,7 @@ Project to scrape German beer vendors finding the best deals and cheapest option
 * [Craftbeer Shop]() - __Done__
 * [BierSelect]() - __Done__
 * [Bierothek]() - __Done__
-* [Ratsherrn]() - __In progress__
+* [Ratsherrn]() - __Done__
 * [Biermarket]() - __Done__
 * [BierPost]() - __In progress__
 * [Bierlinie](https://www.bierlinie-shop.de/) - __On hold__
@@ -23,7 +23,7 @@ Project to scrape German beer vendors finding the best deals and cheapest option
 ### Current TODOs:
 * Implement playwright/scrapy_playwright for dynamic content
 * Fix craftbeer-shop.com paging (no longer through link but dynamic link click)
-* ...
+* Bierselect button to next page is missing, for now solved by setting products shown per page on max of 50... 
 
 
 ### Run scrapers:

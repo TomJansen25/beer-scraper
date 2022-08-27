@@ -36,23 +36,27 @@ class BierSelectSpider(scrapy.Spider):
             # 'https://bierselect.de/Sale-'
         ]
 
+        # Add 'af=50' to retrieve 50 products per page since next page link is missing...
+        urls = [f"{url}?af=50" for url in urls]
+
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response, **kwargs):
         logger.info(f"Crawling {response.url}!")
 
-        products = response.css("div.product-wrapper")
-        logger.info(f"Found {len(products)} products on page {response.url}, starting to crawl...")
+        products = response.css("div#product-list > div.product-wrapper")
+        num_products = len(products)
+        logger.info(f"Found {num_products} products on page {response.url}, starting to crawl...")
         success_counter = 0
 
         for product in products:
             try:
                 loader = ProductItemLoader(selector=product)
 
-                name = product.xpath('.//div[@class="caption"]//h4//a/text()').get()
+                name = product.xpath(".//h4[@class='productbox-title']//a/text()").get()
                 # Skip this beer if it is a package
-                if "paket" in name.lower():
+                if not name or "paket" in name.lower():
                     continue
 
                 availability = product.xpath(
@@ -62,36 +66,33 @@ class BierSelectSpider(scrapy.Spider):
                 if availability == "momentan nicht verfügbar":
                     available = False
 
+                price_eur = product.xpath(
+                    ".//div[@class='price_wrapper']//meta[@itemprop='price']/@content").get()
+
                 prices = product.xpath(
                     './/strong[@class="price text-nowrap"]//span/text()'
                 ).getall()
-
-                if len(prices) == 2:
-                    on_sale, original_price = False, None
-                elif len(prices) > 2 and prices[1] == "%":
+                if len(prices) > 1:
                     on_sale, original_price = True, prices[3]
                 else:
-                    self.logger.warning(
-                        "Could not figure out whether product on sale or not. Product will be ignored."
-                    )
-                    continue
+                    on_sale, original_price = False, None
 
-                volume = product.xpath(
-                    './/div[@class="base_price text-nowrap"]/text()'
-                ).getall()[2]
+                volumes = product.xpath(".//div[@class='base_price']/text()").getall()
+                volume = next(v for v in volumes if "Liter" in v)
 
                 loader.add_value("vendor", self.name)
                 loader.add_value(
                     "style",
                     response.url.split("/")[-1]
+                    .replace("?af=50", "")
                     .replace("_1", "")
                     .replace("_s2", "")
                     .replace("_s3", ""),
                 )
 
-                loader.add_xpath("product_url", './/div[@class="caption"]//meta/@content')
+                loader.add_xpath("product_url", ".//h4[@class='productbox-title']//a/@href")
                 loader.add_xpath(
-                    "image_url", './/div[@class="image-content"]//meta/@content'
+                    "image_url", ".//div[contains(@class, 'productbox-image')]//img/@src"
                 )
 
                 loader.add_value("scraped_from_url", response.url)
@@ -99,12 +100,11 @@ class BierSelectSpider(scrapy.Spider):
                 loader.add_value("name", name)
                 loader.add_value("available", available)
 
-                loader.add_xpath(
-                    "price_eur", './/strong[@class="price text-nowrap"]//span[1]/text()'
-                )
+                loader.add_value("price_eur", price_eur)
                 loader.add_value("volume_liter", volume)
                 loader.add_xpath(
-                    "price_eur_per_liter", './/span[@class="value hidden-xs"]/text()'
+                    "price_eur_per_liter",
+                    './/div[@class="base_price"]//meta[@itemprop="price"]/@content'
                 )
 
                 loader.add_value("on_sale", on_sale)
@@ -118,7 +118,8 @@ class BierSelectSpider(scrapy.Spider):
                 logger.error(f"Error {e} occurred...")
 
         logger.info(
-            f"Finished crawling {response.url}. Successfully crawled {success_counter} products!"
+            f"Finished crawling {response.url}. Successfully crawled {success_counter} "
+            f"out of {num_products} products!"
         )
 
         # Recursively follow the link to the next page, extracting data from it
