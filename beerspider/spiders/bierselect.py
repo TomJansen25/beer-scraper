@@ -47,7 +47,9 @@ class BierSelectSpider(scrapy.Spider):
 
         products = response.css("div#product-list > div.product-wrapper")
         num_products = len(products)
-        logger.info(f"Found {num_products} products on page {response.url}, starting to crawl...")
+        logger.info(
+            f"Found {num_products} products on page {response.url}, starting to crawl..."
+        )
         success_counter = 0
 
         for product in products:
@@ -67,7 +69,8 @@ class BierSelectSpider(scrapy.Spider):
                     available = False
 
                 price_eur = product.xpath(
-                    ".//div[@class='price_wrapper']//meta[@itemprop='price']/@content").get()
+                    ".//div[@class='price_wrapper']//meta[@itemprop='price']/@content"
+                ).get()
 
                 prices = product.xpath(
                     './/strong[@class="price text-nowrap"]//span/text()'
@@ -90,9 +93,12 @@ class BierSelectSpider(scrapy.Spider):
                     .replace("_s3", ""),
                 )
 
-                loader.add_xpath("product_url", ".//h4[@class='productbox-title']//a/@href")
                 loader.add_xpath(
-                    "image_url", ".//div[contains(@class, 'productbox-image')]//img/@src"
+                    "product_url", ".//h4[@class='productbox-title']//a/@href"
+                )
+                loader.add_xpath(
+                    "image_url",
+                    ".//div[contains(@class, 'productbox-image')]//img/@src",
                 )
 
                 loader.add_value("scraped_from_url", response.url)
@@ -104,7 +110,7 @@ class BierSelectSpider(scrapy.Spider):
                 loader.add_value("volume_liter", volume)
                 loader.add_xpath(
                     "price_eur_per_liter",
-                    './/div[@class="base_price"]//meta[@itemprop="price"]/@content'
+                    './/div[@class="base_price"]//meta[@itemprop="price"]/@content',
                 )
 
                 loader.add_value("on_sale", on_sale)

@@ -39,7 +39,9 @@ class BeyondBeerSpider(scrapy.Spider):
 
         products = response.xpath('//div[@class="product--box box--minimal"]')
         num_products = len(products)
-        logger.info(f"Found {num_products} products on page {response.url}, starting to crawl...")
+        logger.info(
+            f"Found {num_products} products on page {response.url}, starting to crawl..."
+        )
         success_counter = 0
 
         for product in products:
@@ -61,7 +63,9 @@ class BeyondBeerSpider(scrapy.Spider):
                 loader.add_xpath("brewery", './/h3[@class="supplier--name"]/text()')
                 loader.add_css("style", "h2.product--style::text")
 
-                loader.add_xpath("product_url", './/div[@class="product--info"]//a/@href')
+                loader.add_xpath(
+                    "product_url", './/div[@class="product--info"]//a/@href'
+                )
                 loader.add_value("image_url", image_url)
 
                 loader.add_value("scraped_from_url", response.url)
@@ -76,7 +80,8 @@ class BeyondBeerSpider(scrapy.Spider):
                     "volume_liter", './/div[@class="price--unit"]//span[2]/text()'
                 )
                 loader.add_xpath(
-                    "price_eur_per_liter", './/div[@class="price--unit"]//span[3]/text()'
+                    "price_eur_per_liter",
+                    './/div[@class="price--unit"]//span[3]/text()',
                 )
 
                 loader.add_value("on_sale", on_sale)

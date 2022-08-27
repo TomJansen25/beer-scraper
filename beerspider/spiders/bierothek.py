@@ -42,7 +42,9 @@ class BierothekSpider(scrapy.Spider):
         logger.info(f"Crawling {response.url}!")
 
         products = response.css("div.article_entry")
-        logger.info(f"Found {len(products)} products on page {response.url}, starting to crawl...")
+        logger.info(
+            f"Found {len(products)} products on page {response.url}, starting to crawl..."
+        )
         success_counter = 0
 
         for product in products:
@@ -53,7 +55,9 @@ class BierothekSpider(scrapy.Spider):
                 if any(n in name.lower() for n in ["paket", "package", "box"]):
                     continue
 
-                not_available = product.xpath('.//div[contains(@class, "out-of-stock")]').get()
+                not_available = product.xpath(
+                    './/div[contains(@class, "out-of-stock")]'
+                ).get()
                 available = not bool(not_available)
 
                 product_url = product.xpath(

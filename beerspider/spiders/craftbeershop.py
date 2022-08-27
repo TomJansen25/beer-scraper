@@ -53,7 +53,9 @@ class CraftbeerShopSpider(scrapy.Spider):
         logger.info(f"Crawling {response.url}...")
 
         products = response.css("div.product-cell__wrapper")
-        logger.info(f"Found {len(products)} products on page {response.url}, starting to crawl...")
+        logger.info(
+            f"Found {len(products)} products on page {response.url}, starting to crawl..."
+        )
         success_counter = 0
 
         for product in products:

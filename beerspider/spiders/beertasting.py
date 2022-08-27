@@ -1,8 +1,8 @@
-from scrapy import Spider, Request, Selector
 from loguru import logger
+from scrapy import Request, Selector, Spider
 from scrapy.utils.reactor import install_reactor
-from scrapy_playwright.page import PageMethod
 from scrapy_playwright.handler import Page
+from scrapy_playwright.page import PageMethod
 
 from beerspider.items import ProductItemLoader, volume_str_to_float
 
@@ -36,9 +36,13 @@ class BeertastingSpider(Spider):
         page_content = await page.content()
         playwright_selector = Selector(text=page_content)
 
-        products = playwright_selector.xpath("//div[contains(@class, 'bts-product-item--beer')]")
+        products = playwright_selector.xpath(
+            "//div[contains(@class, 'bts-product-item--beer')]"
+        )
         num_products = len(products)
-        logger.info(f"Found {num_products} products on page {response.url}, starting to crawl...")
+        logger.info(
+            f"Found {num_products} products on page {response.url}, starting to crawl..."
+        )
 
         # products = response.xpath("//div[contains(@class, 'bts-product-item--beer')]")
         # logger.info(f"Found {len(products)} products on page, starting to crawl...")
@@ -136,9 +140,11 @@ class BeertastingSpider(Spider):
                 self.logger.error(f"ERROR.. The following error occurred: {e}")
                 logger.error(f"Error {e} occurred...")
 
-        current_page = int(response.xpath(
-            ".//ul[@class='pagination b-pagination']//li[@class='page-item active']//a/text()"
-        ).get())
+        current_page = int(
+            response.xpath(
+                ".//ul[@class='pagination b-pagination']//li[@class='page-item active']//a/text()"
+            ).get()
+        )
 
         logger.info(
             f"Finished crawling page {current_page} of {response.url}! "
@@ -162,7 +168,7 @@ class BeertastingSpider(Spider):
                         PageMethod(
                             method="click",
                             selector="//ul[@class='pagination b-pagination']//li[@class='page-item "
-                                     "active']/following-sibling::li//a"
+                            "active']/following-sibling::li//a",
                         ),
                     ],
                 ),

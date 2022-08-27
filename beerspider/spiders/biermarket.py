@@ -1,5 +1,5 @@
-from scrapy import Request, Spider
 from loguru import logger
+from scrapy import Request, Spider
 
 from beerspider.items import ProductItemLoader
 

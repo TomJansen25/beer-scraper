@@ -1,7 +1,8 @@
-from scrapy import Spider, Selector, Request
 from loguru import logger
-from beerspider.items import ProductItemLoader
+from scrapy import Request, Selector, Spider
 from scrapy.shell import inspect_response
+
+from beerspider.items import ProductItemLoader
 
 
 class BierlineSpider(Spider):
@@ -38,7 +39,12 @@ class BierlineSpider(Spider):
 
             loader = ProductItemLoader(selector=product)
 
-            style = response.url.split("/")[-1].replace("?items=100", "").replace("-", "").title()
+            style = (
+                response.url.split("/")[-1]
+                .replace("?items=100", "")
+                .replace("-", "")
+                .title()
+            )
 
             product_url = product.xpath(".//div[@class='thumb-image']//a/@href").get()
             product_url = f"{self.main_url}{product_url}"
@@ -68,5 +74,3 @@ class BierlineSpider(Spider):
             )
             loader.add_value("volume_liter", volume)
             loader.add_value("price_eur_per_liter", price_per_liter)
-
-

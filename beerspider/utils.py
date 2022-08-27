@@ -7,4 +7,3 @@ def get_project_dir() -> Path:
     dir_index = parts.index("beer-scraper")
     project_path = Path(*parts[: dir_index + 1])
     return project_path
-
