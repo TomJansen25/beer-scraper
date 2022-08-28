@@ -1,5 +1,6 @@
 import scrapy
 from loguru import logger
+
 from beerspider.items import ProductItemLoader
 
 
@@ -13,7 +14,7 @@ class RatsherrnSpider(scrapy.Spider):
         urls = [
             "https://shop.ratsherrn.de/klassik-linie/",
             "https://shop.ratsherrn.de/organic-linie/",
-            "https://shop.ratsherrn.de/kenner-linie/"
+            "https://shop.ratsherrn.de/kenner-linie/",
         ]
 
         for url in urls:
@@ -23,20 +24,26 @@ class RatsherrnSpider(scrapy.Spider):
         logger.info(f"Crawling {response.url}!")
 
         products = response.css("div.product--box")
-        logger.info(f"Found {len(products)} products on page {response.url}, starting to crawl...")
+        logger.info(
+            f"Found {len(products)} products on page {response.url}, starting to crawl..."
+        )
         success_counter = 0
 
         for product in products:
             try:
                 loader = ProductItemLoader(selector=product)
 
-                images = product.xpath(".//span[@class='image--media']//img/@srcset").get()
+                images = product.xpath(
+                    ".//span[@class='image--media']//img/@srcset"
+                ).get()
                 image_url = images.split(", ")[0] if images else None
 
                 loader.add_value("vendor", self.name)
                 loader.add_value("brewery", self.name)
 
-                loader.add_xpath("product_url", ".//div[@class='product--info']//a/@href")
+                loader.add_xpath(
+                    "product_url", ".//div[@class='product--info']//a/@href"
+                )
                 loader.add_value("image_url", image_url)
                 loader.add_value("scraped_from_url", response.url)
 
@@ -44,13 +51,16 @@ class RatsherrnSpider(scrapy.Spider):
                 loader.add_css("description", "div.product--description::text")
                 loader.add_value("available", True)
 
-                loader.add_xpath("price_eur", ".//div[@class='product--price']//span/text()")
-                price_volume = product.xpath(".//div[@class='price--unit']//span/text()").getall()
-                loader.add_value('volume_liter', price_volume[1])
-                loader.add_value('price_eur_per_liter', price_volume[2])
+                loader.add_xpath(
+                    "price_eur", ".//div[@class='product--price']//span/text()"
+                )
+                price_volume = product.xpath(
+                    ".//div[@class='price--unit']//span/text()"
+                ).getall()
+                loader.add_value("volume_liter", price_volume[1])
+                loader.add_value("price_eur_per_liter", price_volume[2])
 
-                loader.load_item()
-                logger.info(loader.item.__dict__)
+                yield loader.load_item()
                 success_counter += 1
 
             except Exception as e:
