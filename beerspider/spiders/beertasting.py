@@ -1,5 +1,6 @@
 from loguru import logger
 from scrapy import Request, Selector, Spider
+from scrapy.shell import inspect_response
 from scrapy.utils.reactor import install_reactor
 from scrapy_playwright.handler import Page
 from scrapy_playwright.page import PageMethod
@@ -15,17 +16,39 @@ class BeertastingSpider(Spider):
 
     def start_requests(self):
         urls = [
+            "https://www.beertasting.com/de-de/biere/ale-angloamerikanisch",
             "https://www.beertasting.com/de-de/biere/ale-belgisch",
+            "https://www.beertasting.com/de-de/biere/alkoholfrei",
+            "https://www.beertasting.com/de-de/biere/biermischgetranke",
+            "https://www.beertasting.com/de-de/biere/bock",
             "https://www.beertasting.com/de-de/biere/cider",
-            "https://www.beertasting.com/de-de/biere/weissbier",
+            "https://www.beertasting.com/de-de/biere/dunkles-lager",
+            "https://www.beertasting.com/de-de/biere/helles-lager",
             "https://www.beertasting.com/de-de/biere/india-pale-ale",
+            "https://www.beertasting.com/de-de/biere/kreativbier",
+            "https://www.beertasting.com/de-de/biere/nachreifung",
+            "https://www.beertasting.com/de-de/biere/obergarige-leichtbiere",
+            "https://www.beertasting.com/de-de/biere/porter-stout",
+            "https://www.beertasting.com/de-de/biere/sauergarung",
+            "https://www.beertasting.com/de-de/biere/weissbier",
+            "https://www.beertasting.com/de-de/glutenfrei",
         ]
 
         for url in urls:
             yield Request(
                 url=url,
                 callback=self.parse,
-                meta={"playwright": True, "playwright_include_page": True},
+                meta=dict(
+                    playwright=True,
+                    playwright_include_page=True,
+                    playwright_page_methods=[
+                        PageMethod(
+                            method="click",
+                            selector="//div[contains(@class, 'bts-per-page-select')]//button",
+                        ),
+                        PageMethod(method="click", selector="//a[@id='bs-select-1-2']"),
+                    ],
+                ),
                 errback=self.errback_close_page,
             )
 

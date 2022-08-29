@@ -42,6 +42,7 @@ class CraftbeerShopSpider(scrapy.Spider):
             "https://www.craftbeer-shop.com/trappistenbier",
             "https://www.craftbeer-shop.com/weizen",
             "https://www.craftbeer-shop.com/witbier",
+            "https://www.craftbeer-shop.com/sommerbier",
             "https://www.craftbeer-shop.com/Sale",
         ]
 
@@ -53,8 +54,9 @@ class CraftbeerShopSpider(scrapy.Spider):
         logger.info(f"Crawling {response.url}...")
 
         products = response.css("div.product-cell__wrapper")
+        num_products = len(products)
         logger.info(
-            f"Found {len(products)} products on page {response.url}, starting to crawl..."
+            f"Found {num_products} products on page {response.url}, starting to crawl..."
         )
         success_counter = 0
 
@@ -109,11 +111,12 @@ class CraftbeerShopSpider(scrapy.Spider):
                 logger.error(f"Error {e} occurred...")
 
         logger.info(
-            f"Finished crawling {response.url}. Successfully crawled {success_counter} products!"
+            f"Finished crawling {response.url}. Successfully crawled {success_counter} "
+            f"out of {num_products} products!"
         )
 
         # Recursively follow the link to the next page, extracting data from it
-        next_page = response.css("li.next > a").attrib.get("href")
+        next_page = response.xpath("//button[@class='load-more__pagination']/@id").get()
         if next_page is not None:
-            print(f"Found another page, moving to: {next_page}")
+            logger.info(f"Found another page, moving to: {next_page}")
             yield response.follow(next_page, callback=self.parse)

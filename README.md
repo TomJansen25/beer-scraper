@@ -10,13 +10,13 @@ Project to scrape German beer vendors finding the best deals and cheapest option
 
 ## Vendor websites:
 * [Beyond Beer]() - __Done__
-* [Craftbeer Shop]() - __Done__
+* [Craftbeer Shop](https://www.craftbeer-shop.com/) - __Done__
 * [BierSelect]() - __Done__
 * [Bierothek]() - __Done__
 * [Ratsherrn]() - __Done__
-* [Biermarket]() - __Done__
+* [Biermarket](https://www.biermarket.de/) - __Done__
 * [BierPost]() - __In progress__
-* [Bierlinie](https://www.bierlinie-shop.de/) - __On hold__
+* [Bierlinie](https://www.bierlinie-shop.de/) - __Done__
 * [Beertasting](https://www.beertasting.com/de-de) - __In progress__
 
 

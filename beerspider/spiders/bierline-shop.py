@@ -55,6 +55,51 @@ class BierlineSpider(Spider):
             "https://www.bierlinie-shop.de/biersorten/hefeweizen",
             "https://www.bierlinie-shop.de/biersorten/helles",
             "https://www.bierlinie-shop.de/biersorten/herbstbiere",
+            "https://www.bierlinie-shop.de/biersorten/holzgereifte-biere",
+            "https://www.bierlinie-shop.de/biersorten/honig-bier",
+            "https://www.bierlinie-shop.de/biersorten/imperial-ipa",
+            "https://www.bierlinie-shop.de/biersorten/imperial-stout",
+            "https://www.bierlinie-shop.de/biersorten/india-pale-ale",
+            "https://www.bierlinie-shop.de/biersorten/kirschbier",
+            "https://www.bierlinie-shop.de/biersorten/koelsch",
+            "https://www.bierlinie-shop.de/biersorten/kraeusen-kellerbier-zwickel",
+            "https://www.bierlinie-shop.de/biersorten/kraeuter-und-gewuerzbiere",
+            "https://www.bierlinie-shop.de/biersorten/kristall",
+            "https://www.bierlinie-shop.de/biersorten/lager",
+            "https://www.bierlinie-shop.de/biersorten/lambic",
+            "https://www.bierlinie-shop.de/biersorten/leichtbier",
+            "https://www.bierlinie-shop.de/biersorten/limited-edition",
+            "https://www.bierlinie-shop.de/biersorten/maerzen",
+            "https://www.bierlinie-shop.de/biersorten/new-england-ipa",
+            "https://www.bierlinie-shop.de/biersorten/oktoberfestbier",
+            "https://www.bierlinie-shop.de/biersorten/oud-bruin",
+            "https://www.bierlinie-shop.de/biersorten/pale-ale",
+            "https://www.bierlinie-shop.de/biersorten/pils",
+            "https://www.bierlinie-shop.de/biersorten/porter",
+            "https://www.bierlinie-shop.de/biersorten/radler",
+            "https://www.bierlinie-shop.de/biersorten/regionale-spezialitaeten",
+            "https://www.bierlinie-shop.de/biersorten/quadrupel",
+            "https://www.bierlinie-shop.de/biersorten/reisbier",
+            "https://www.bierlinie-shop.de/biersorten/saison",
+            "https://www.bierlinie-shop.de/biersorten/sauerbier",
+            "https://www.bierlinie-shop.de/biersorten/session-ipa",
+            "https://www.bierlinie-shop.de/biersorten/schwarzbier",
+            "https://www.bierlinie-shop.de/biersorten/single-enkel",
+            "https://www.bierlinie-shop.de/biersorten/sommerbiere",
+            "https://www.bierlinie-shop.de/biersorten/speciale-belge",
+            "https://www.bierlinie-shop.de/biersorten/spezial",
+            "https://www.bierlinie-shop.de/biersorten/starkbier",
+            "https://www.bierlinie-shop.de/biersorten/stout",
+            "https://www.bierlinie-shop.de/biersorten/strong-golden-ale",
+            "https://www.bierlinie-shop.de/biersorten/teufelsbiere",
+            "https://www.bierlinie-shop.de/biersorten/trappistenbier",
+            "https://www.bierlinie-shop.de/biersorten/tripel",
+            "https://www.bierlinie-shop.de/biersorten/veganes-bier",
+            "https://www.bierlinie-shop.de/biersorten/weihnachtsbier",
+            "https://www.bierlinie-shop.de/biersorten/weissbier",
+            "https://www.bierlinie-shop.de/biersorten/weizenbier",
+            "https://www.bierlinie-shop.de/biersorten/winterbiere",
+            "https://www.bierlinie-shop.de/biersorten/witbier",
         ]
 
         # Add '?items=100' to retrieve 100 products per page and click between pages less
@@ -90,8 +135,10 @@ class BierlineSpider(Spider):
                     .title()
                 )
 
-                product_url = product.xpath(".//div[@class='thumb-image']//a/@href").get()
-                product_url = f"{self.main_url}{product_url}"
+                product_url = product.xpath(
+                    ".//div[@class='thumb-image']//a/@href"
+                ).get()
+                product_url = f"{self.main_url[:-1]}{product_url}"
 
                 availability = product.xpath(
                     ".//div[@class='thumb-content']//button[contains(@class, 'button-basket')]"
@@ -115,7 +162,8 @@ class BierlineSpider(Spider):
                 loader.add_value("scraped_from_url", response.url)
 
                 loader.add_xpath(
-                    "price_eur", ".//div[@class='price']//span[@class='price-value']/text()"
+                    "price_eur",
+                    ".//div[@class='price']//span[@class='price-value']/text()",
                 )
                 loader.add_value("volume_liter", volume)
                 loader.add_value("price_eur_per_liter", price_per_liter)
