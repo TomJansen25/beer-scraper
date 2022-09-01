@@ -137,7 +137,9 @@ class BierPostSpider(scrapy.Spider):
                     .title(),
                 )
 
-                image_url = product.xpath(".//a[contains(@class, 'art-picture')]//img/@src").get()
+                image_url = product.xpath(
+                    ".//a[contains(@class, 'art-picture')]//img/@src"
+                ).get()
                 image_url = f"https:{image_url}"
 
                 product_url = product.xpath(

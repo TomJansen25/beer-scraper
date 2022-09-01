@@ -7,7 +7,9 @@ from scrapy_playwright.page import PageMethod
 
 from beerspider.items import ProductItemLoader, volume_str_to_float
 
-if not verify_installed_reactor("twisted.internet.asyncioreactor.AsyncioSelectorReactor"):
+if not verify_installed_reactor(
+    "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
+):
     logger.info("AsyncioSelectorReactor not installed yet and will be installed...")
     install_reactor("twisted.internet.asyncioreactor.AsyncioSelectorReactor")
 

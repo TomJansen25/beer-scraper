@@ -33,8 +33,7 @@ Project to scrape German beer vendors finding the best deals and cheapest option
 ### Run scrapers:
 ```shell
 cd $HOME/beer-scraper/
-poetry shell
-python ./run_scrapers.py
+make scrape-all
 ```
 
 or:
@@ -42,9 +41,7 @@ or:
 ```shell
 > cd $HOME/beer-scraper/
 > poetry shell
-> scrapy crawl "BierSelect"
 > scrapy crawl "Beyond Beer"
-> scrapy crawl "Biermarket"
 > scrapy crawl "Bierothek" 
 > scrapy crawl "Craftbeer Shop"   
 ```
