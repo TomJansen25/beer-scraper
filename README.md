@@ -9,16 +9,20 @@ Project to scrape German beer vendors finding the best deals and cheapest option
   - Usage of playwright for dynamic websites is only supported in Unix systems
 
 ## Vendor websites:
-* [Beyond Beer]() - __Done__
-* [Craftbeer Shop](https://www.craftbeer-shop.com/) - __Done__
-* [BierSelect]() - __Done__
-* [Bierothek]() - __Done__
-* [Ratsherrn]() - __Done__
-* [Biermarket](https://www.biermarket.de/) - __Done__
-* [BierPost]() - __In progress__
-* [Bierlinie](https://www.bierlinie-shop.de/) - __Done__
 * [Beertasting](https://www.beertasting.com/de-de) - __In progress__
-
+* [Beerwulf](https://www.beerwulf.com/de-de/) - __To Do__
+* [Beyond Beer]() - __Done__
+* [Bierlinie](https://www.bierlinie-shop.de/) - __Done__
+* [Biermarket](https://www.biermarket.de/) - __Done__
+* [Bierothek]() - __Done__
+* [BierPost]() - __In progress__
+* [BierSelect]() - __Done__
+* [Craftbeer Shop](https://www.craftbeer-shop.com/) - __Done__
+* [Flaschenpost](https://www.flaschenpost.de/) - __On hold__
+* [Hier gibt's Bier](https://www.hier-gibts-bier.de/de/) - __To Do__
+* [Meibier](https://www.meibier.de/) - __To Do__
+* [Ratsherrn]() - __Done__
+* [REWE]() - __On Hold__
 
 ### Current TODOs:
 * Implement playwright/scrapy_playwright for dynamic content
@@ -50,7 +54,7 @@ or:
 
 ```shell
 # OPEN WSL SHELL!
- cd $HOME/../mnt/c/Users/tomja/Desktop/Programming/beer-scraper
+cd $HOME/../mnt/c/Users/tomja/Desktop/Programming/beer-scraper
 ```
 
 ### Useful Links:
