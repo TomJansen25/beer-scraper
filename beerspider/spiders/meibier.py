@@ -22,7 +22,21 @@ class MeibierSpider(Spider):
     main_url = "https://www.meibier.de/"
 
     def start_requests(self):
-        urls = ["https://www.meibier.de/c/biersorten/weizenbier"]
+        urls = [
+            "https://www.meibier.de/c/biersorten/alkoholfreies-bier",
+            "https://www.meibier.de/c/biersorten/bio-oder-glutenfreies-bier",
+            "https://www.meibier.de/c/biersorten/bockbier-oder-festbier",
+            "https://www.meibier.de/c/biersorten/craftbier-oder-spezialitaeten",
+            "https://www.meibier.de/c/biersorten/dunkle-biere",
+            "https://www.meibier.de/c/biersorten/hell-oder-lager-oder-landbier",
+            "https://www.meibier.de/c/biersorten/kellerbier-oder-zwickelbier",
+            "https://www.meibier.de/c/biersorten/maerzen",
+            "https://www.meibier.de/c/biersorten/pils",
+            "https://www.meibier.de/c/biersorten/radler-oder-biermix-oder-leichtes-bier",
+            "https://www.meibier.de/c/biersorten/rauchbier",
+            "https://www.meibier.de/c/biersorten/schwarzbier",
+            "https://www.meibier.de/c/biersorten/weizenbier",
+        ]
         urls = [f"{url}?page=20" for url in urls]
 
         for url in urls:
@@ -48,9 +62,7 @@ class MeibierSpider(Spider):
         # inspect_response(response, self)
 
         for product in products:
-
             try:
-
                 loader = ProductItemLoader(selector=product)
 
                 out_of_stock = product.xpath(
@@ -64,15 +76,21 @@ class MeibierSpider(Spider):
                 image_url = None
                 if image_srcset:
                     image_url = image_srcset.split(" ")[0]
+                    image_url = f"{self.main_url[:-1]}{image_url}"
 
                 loader.add_value("vendor", self.name)
                 loader.add_value(
-                    "style", response.url.split("/")[-1].replace("?page=20", "").title()
+                    "style",
+                    response.url.split("/")[-1]
+                    .replace("?page=20", "")
+                    .replace("-oder-", " | ")
+                    .replace("-", " ")
+                    .title(),
                 )
 
                 product_url = product.css("a.product-item-link::attr(href)").get()
                 loader.add_value("product_url", f"{self.main_url[:-1]}{product_url}")
-                loader.add_value("image_url", f"{self.main_url[:-1]}{image_url}")
+                loader.add_value("image_url", image_url)
 
                 loader.add_value("scraped_from_url", response.url)
 
