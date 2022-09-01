@@ -1,10 +1,9 @@
-import scrapy
 from loguru import logger
-
+from scrapy import Spider, Request
 from beerspider.items import ProductItemLoader
 
 
-class BierothekSpider(scrapy.Spider):
+class BierothekSpider(Spider):
     """
     The Bierothek Spider used to crawl Beers from bierothek.de
     """
@@ -36,14 +35,15 @@ class BierothekSpider(scrapy.Spider):
         ]
 
         for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+            yield Request(url=url, callback=self.parse)
 
     def parse(self, response, **kwargs):
         logger.info(f"Crawling {response.url}!")
 
         products = response.css("div.article_entry")
+        num_products = len(products)
         logger.info(
-            f"Found {len(products)} products on page {response.url}, starting to crawl..."
+            f"Found {num_products} products on page {response.url}, starting to crawl..."
         )
         success_counter = 0
 
@@ -110,5 +110,6 @@ class BierothekSpider(scrapy.Spider):
                 logger.error(f"Error {e} occurred...")
 
         logger.info(
-            f"Finished crawling {response.url}. Successfully crawled {success_counter} products!"
+            f"Finished crawling {response.url}. Successfully crawled {success_counter} "
+            f"out of {num_products} products!"
         )
