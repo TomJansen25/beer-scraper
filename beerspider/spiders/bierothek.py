@@ -79,11 +79,13 @@ class BierothekSpider(Spider):
                 sale = product.xpath('.//span[@class="ribbon red"]//small/text()').get()
                 on_sale = bool(sale)
 
+                style = response.url.split("/")[-1].replace("-", " ").title()
+
                 loader.add_value("vendor", self.name)
                 loader.add_xpath(
                     "brewery", './/div[@class="meta"]//a[@class="smooth"]/text()'
                 )
-                loader.add_value("style", response.url.split("/")[-1])
+                loader.add_value("style", style)
 
                 loader.add_value("product_url", f"{self.main_url[:-1]}{product_url}")
                 loader.add_value("image_url", f"{self.main_url[:-1]}{image_url}")

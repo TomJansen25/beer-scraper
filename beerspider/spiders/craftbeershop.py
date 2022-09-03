@@ -43,14 +43,13 @@ class CraftbeerShopSpider(scrapy.Spider):
             "https://www.craftbeer-shop.com/weizen",
             "https://www.craftbeer-shop.com/witbier",
             "https://www.craftbeer-shop.com/sommerbier",
-            "https://www.craftbeer-shop.com/Sale",
+            "https://www.craftbeer-shop.com/Sonderangebote",
         ]
 
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response, **kwargs):
-        page = response.url.split("/")[-1]
         logger.info(f"Crawling {response.url}...")
 
         products = response.css("div.product-cell__wrapper")
@@ -83,23 +82,43 @@ class CraftbeerShopSpider(scrapy.Spider):
                 ).get()
                 on_sale = bool(discount)
 
+                # Check whether product has a price range, and if so get the single bottle value
+                price_eur = product.xpath(
+                    ".//span[contains(@class, 'second-range-price')]/text()"
+                ).get()
+                price_per_liter = product.xpath(
+                    ".//div[contains(@class, 'base-price')]//span/text()"
+                ).get()
+                if not price_eur:
+                    price_eur = product.xpath(
+                        ".//div[contains(@class, 'price_wrapper')]//strong//"
+                        "meta[@itemprop='price']/@content"
+                    ).get()
+                else:
+                    price_per_liter = price_per_liter.split(" - ")[-1]
+
+                style = (
+                    response.url.split("/")[-1].split("_")[0].replace("-", " ").title()
+                )
+
                 loader.add_value("brewery", "")
                 loader.add_value("name", full_name)
                 loader.add_value("available", available)
                 loader.add_value("vendor", self.name)
-                loader.add_value("style", page)
+                loader.add_value("style", style)
                 loader.add_xpath(
-                    "image_url", './/div[@class="image-content"]//meta/@content'
+                    "product_url", ".//a[contains(@class, 'image-wrapper')]/@href"
                 )
                 loader.add_xpath(
-                    "product_url",
-                    './/div[@class="product-cell__caption caption text-center"]//meta/@content',
+                    "image_url", ".//img[contains(@class, 'mediabox-img')]/@data-src"
                 )
                 loader.add_value("scraped_from_url", response.url)
                 loader.add_value("description", "")
-                loader.add_css("price_eur", "div.price_wrapper > strong > span::text")
+
+                loader.add_value("price_eur", price_eur)
                 loader.add_value("volume_liter", volume)
-                loader.add_css("price_eur_per_liter", "div.base_price > span::text")
+                loader.add_value("price_eur_per_liter", price_per_liter)
+
                 loader.add_value("on_sale", on_sale)
                 loader.add_value("discount", discount)
 

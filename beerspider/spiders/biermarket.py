@@ -36,10 +36,10 @@ class BiermarketSpider(Spider):
                     './/div[@class="webing-product-name"]//a/@title'
                 ).get()
 
-                # Check for names to exclude from scraping
+                # Check for names of products to exclude from scraping
                 if any(
                     n in name.lower()
-                    for n in ["paket", "package", "box", "überraschungsbier"]
+                    for n in ["paket", "package", "box", "überraschungsbier", "senf"]
                 ):
                     continue
 

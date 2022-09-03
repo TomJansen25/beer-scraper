@@ -87,10 +87,10 @@ class BierSelectSpider(scrapy.Spider):
                 loader.add_value(
                     "style",
                     response.url.split("/")[-1]
+                    .split("_")[0]
                     .replace("?af=50", "")
-                    .replace("_1", "")
-                    .replace("_s2", "")
-                    .replace("_s3", ""),
+                    .replace("-", " ")
+                    .title(),
                 )
 
                 loader.add_xpath(

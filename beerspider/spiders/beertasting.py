@@ -94,7 +94,7 @@ class BeertastingSpider(Spider):
                 if on_sale:
                     original_price = product.xpath(
                         ".//p[@class='js-discount-price product-price__original']/text()"
-                    )
+                    ).get()
                     discount = discount_badge.css("span.item-label::text")
                 else:
                     original_price, discount = None, None
@@ -151,8 +151,8 @@ class BeertastingSpider(Spider):
                 loader.add_value("volume_liter", str(volume))
                 loader.add_xpath(
                     "price_eur_per_liter",
-                    f".//p[@class='bts-product-item__price-information']//"
-                    f"span[@class='js-base-price']/text()",
+                    ".//p[@class='bts-product-item__price-information']//"
+                    "span[@class='js-base-price']/text()",
                 )
 
                 loader.add_value("on_sale", on_sale)
