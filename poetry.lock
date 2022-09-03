@@ -267,6 +267,14 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
+name = "cython"
+version = "0.29.32"
+description = "The Cython compiler for writing C extensions for the Python language."
+category = "main"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[[package]]
 name = "debugpy"
 version = "1.6.3"
 description = "An implementation of the Debug Adapter Protocol for Python"
@@ -536,6 +544,14 @@ description = "JSON Matching Expressions"
 category = "main"
 optional = false
 python-versions = ">=3.7"
+
+[[package]]
+name = "joblib"
+version = "1.1.0"
+description = "Lightweight pipelining with Python functions"
+category = "main"
+optional = false
+python-versions = ">=3.6"
 
 [[package]]
 name = "json5"
@@ -1347,6 +1363,37 @@ requests = ">=1.0.0"
 six = "*"
 
 [[package]]
+name = "scikit-learn"
+version = "1.1.2"
+description = "A set of python modules for machine learning and data mining"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+joblib = ">=1.0.0"
+numpy = ">=1.17.3"
+scipy = ">=1.3.2"
+threadpoolctl = ">=2.0.0"
+
+[package.extras]
+tests = ["numpydoc (>=1.2.0)", "pyamg (>=4.0.0)", "mypy (>=0.961)", "black (>=22.3.0)", "flake8 (>=3.8.2)", "pytest-cov (>=2.9.0)", "pytest (>=5.0.1)", "pandas (>=1.0.5)", "scikit-image (>=0.16.2)", "matplotlib (>=3.1.2)"]
+examples = ["seaborn (>=0.9.0)", "pandas (>=1.0.5)", "scikit-image (>=0.16.2)", "matplotlib (>=3.1.2)"]
+docs = ["sphinxext-opengraph (>=0.4.2)", "sphinx-prompt (>=1.3.0)", "Pillow (>=7.1.2)", "numpydoc (>=1.2.0)", "sphinx-gallery (>=0.7.0)", "sphinx (>=4.0.1)", "memory-profiler (>=0.57.0)", "seaborn (>=0.9.0)", "pandas (>=1.0.5)", "scikit-image (>=0.16.2)", "matplotlib (>=3.1.2)"]
+benchmark = ["memory-profiler (>=0.57.0)", "pandas (>=1.0.5)", "matplotlib (>=3.1.2)"]
+
+[[package]]
+name = "scipy"
+version = "1.6.1"
+description = "SciPy: Scientific Library for Python"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+numpy = ">=1.16.5"
+
+[[package]]
 name = "scrapy"
 version = "2.6.2"
 description = "A high-level Web Crawling and Web Scraping framework"
@@ -1446,6 +1493,19 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "sparse-dot-topn-for-blocks"
+version = "0.3.1.post3"
+description = "This package is intended for matrix blocks, boosting a sparse matrix multiplication followed by selecting the top-n multiplication"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+cython = ">=0.29.15"
+numpy = ">=1.16.6"
+scipy = ">=1.2.3"
+
+[[package]]
 name = "sqlalchemy"
 version = "1.4.40"
 description = "Database Abstraction Library"
@@ -1494,6 +1554,22 @@ pure-eval = "*"
 tests = ["cython", "littleutils", "pygments", "typeguard", "pytest"]
 
 [[package]]
+name = "string-grouper"
+version = "0.6.1"
+description = "String grouper contains functions to do string matching using TF-IDF and the cossine similarity. Based on https://bergvca.github.io/2017/10/14/super-fast-string-matching.html"
+category = "main"
+optional = false
+python-versions = ">3.7"
+
+[package.dependencies]
+numpy = "*"
+pandas = ">=0.25.3"
+scikit-learn = "*"
+scipy = "*"
+sparse-dot-topn-for-blocks = ">=0.3.1"
+topn = ">=0.0.7"
+
+[[package]]
 name = "terminado"
 version = "0.15.0"
 description = "Tornado websocket backend for the Xterm.js Javascript terminal emulator library."
@@ -1508,6 +1584,14 @@ tornado = ">=6.1.0"
 
 [package.extras]
 test = ["pre-commit", "pytest-timeout", "pytest (>=6.0)"]
+
+[[package]]
+name = "threadpoolctl"
+version = "3.1.0"
+description = "threadpoolctl"
+category = "main"
+optional = false
+python-versions = ">=3.6"
 
 [[package]]
 name = "tinycss2"
@@ -1553,6 +1637,19 @@ description = "Style preserving TOML library"
 category = "dev"
 optional = false
 python-versions = ">=3.6,<4.0"
+
+[[package]]
+name = "topn"
+version = "0.0.7"
+description = "This package boosts a group-wise nlargest sort"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+cython = ">=0.29.15"
+numpy = ">=1.16.6"
+scipy = ">=1.2.3"
 
 [[package]]
 name = "tornado"
@@ -1728,7 +1825,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "57147cb94bf8ab31494ab334ad6b7c13ce8184c83c85f0f6f44a4504ced4af74"
+content-hash = "b908a398492fafebd24c38926620f73eeabff7bdc0be2d99ad96d9ea3403f6a5"
 
 [metadata.files]
 anyio = []
@@ -1795,6 +1892,7 @@ cssselect = [
     {file = "cssselect-1.1.0-py2.py3-none-any.whl", hash = "sha256:f612ee47b749c877ebae5bb77035d8f4202c6ad0f0fc1271b3c18ad6c4468ecf"},
     {file = "cssselect-1.1.0.tar.gz", hash = "sha256:f95f8dedd925fd8f54edb3d2dfb44c190d9d18512377d3c1e2388d16126879bc"},
 ]
+cython = []
 debugpy = []
 decorator = [
     {file = "decorator-5.1.1-py3-none-any.whl", hash = "sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"},
@@ -1903,6 +2001,7 @@ jedi = [
 ]
 jinja2 = []
 jmespath = []
+joblib = []
 json5 = []
 jsonschema = []
 jupyter-client = []
@@ -2177,6 +2276,8 @@ queuelib = [
 ]
 requests = []
 requests-file = []
+scikit-learn = []
+scipy = []
 scrapy = []
 scrapy-playwright = []
 send2trash = [
@@ -2196,9 +2297,12 @@ soupsieve = [
     {file = "soupsieve-2.3.2.post1-py3-none-any.whl", hash = "sha256:3b2503d3c7084a42b1ebd08116e5f81aadfaea95863628c80a3b774a11b7c759"},
     {file = "soupsieve-2.3.2.post1.tar.gz", hash = "sha256:fc53893b3da2c33de295667a0e19f078c14bf86544af307354de5fcf12a3f30d"},
 ]
+sparse-dot-topn-for-blocks = []
 sqlalchemy = []
 stack-data = []
+string-grouper = []
 terminado = []
+threadpoolctl = []
 tinycss2 = []
 tldextract = []
 tomli = [
@@ -2206,6 +2310,7 @@ tomli = [
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
 tomlkit = []
+topn = []
 tornado = []
 traitlets = []
 twisted = []
