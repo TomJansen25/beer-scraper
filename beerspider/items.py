@@ -74,10 +74,11 @@ def price_volume_str_to_float(price_str: str) -> float:
     price_str = price_str.lower()
     price = Price.fromstring(price_str)
 
-    if "pro 100 ml" in price_str or "(100 ml)" in price_str:
+    if "100 ml" in price_str:
         price = price.amount_float * 10
     elif (
         "pro liter" in price_str
+        or "pro 1 l" in price_str
         or "pro l" in price_str
         or "liter" in price_str
         or "/ltr" in price_str

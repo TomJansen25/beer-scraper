@@ -11,6 +11,7 @@ from beerspider.spiders import (
     bierpost,
     bierselect,
     craftbeershop,
+    meibier,
     ratsherrn,
 )
 
@@ -30,5 +31,6 @@ if __name__ == "__main__":
     process.crawl(bierpost.BierPostSpider)
     process.crawl(bierselect.BierSelectSpider)
     process.crawl(craftbeershop.CraftbeerShopSpider)
+    process.crawl(meibier.MeibierSpider)
     process.crawl(ratsherrn.RatsherrnSpider)
     process.start()
