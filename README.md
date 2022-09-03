@@ -24,12 +24,6 @@ Project to scrape German beer vendors finding the best deals and cheapest option
 * [Ratsherrn]() - __Done__
 * [REWE]() - __On Hold__
 
-### Current TODOs:
-* Implement playwright/scrapy_playwright for dynamic content
-* Fix craftbeer-shop.com paging (no longer through link but dynamic link click)
-* Bierselect button to next page is missing, for now solved by setting products shown per page on max of 50... 
-
-
 ### Run scrapers:
 ```shell
 cd $HOME/beer-scraper/
