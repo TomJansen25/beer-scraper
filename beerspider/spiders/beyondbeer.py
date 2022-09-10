@@ -1,12 +1,15 @@
-import scrapy
+from datetime import datetime
+from scrapy import Spider, Request
 from loguru import logger
 
 from beerspider.items import ProductItemLoader
 
 
-class BeyondBeerSpider(scrapy.Spider):
-    name = "Beyond Beer"
+class BeyondBeerSpider(Spider):
+    name = "beyond_beer"
     main_url = "https://www.beyondbeer.de/"
+    datestamp = datetime.now().strftime("%Y%m%d")
+    timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 
     def start_requests(self):
         urls = [
@@ -32,7 +35,7 @@ class BeyondBeerSpider(scrapy.Spider):
         ]
 
         for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+            yield Request(url=url, callback=self.parse)
 
     def parse(self, response, **kwargs):
         logger.info(f"Crawling {response.url}...")
@@ -59,7 +62,7 @@ class BeyondBeerSpider(scrapy.Spider):
                 original_price = product.css("span.price--discount::text").get()
                 on_sale = bool(original_price)
 
-                loader.add_value("vendor", self.name)
+                loader.add_value("vendor", self.name.replace("_", " "))
                 loader.add_xpath("brewery", './/h3[@class="supplier--name"]/text()')
                 loader.add_css("style", "h2.product--style::text")
 

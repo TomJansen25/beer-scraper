@@ -1,17 +1,20 @@
-import scrapy
+from scrapy import Spider, Request
+from datetime import datetime
 from loguru import logger
 
 from beerspider.items import ProductItemLoader
 
 
-class CraftbeerShopSpider(scrapy.Spider):
+class CraftbeerShopSpider(Spider):
     """
     Craftbeer Shop Spider Class
     """
 
-    name = "Craftbeer Shop"
+    name = "craftbeer_shop"
     allowed_domains = ["craftbeer-shop.com"]
     main_url = "https://www.craftbeer-shop.com/"
+    datestamp = datetime.now().strftime("%Y%m%d")
+    timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 
     def start_requests(self):
         urls = [
@@ -47,7 +50,7 @@ class CraftbeerShopSpider(scrapy.Spider):
         ]
 
         for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+            yield Request(url=url, callback=self.parse)
 
     def parse(self, response, **kwargs):
         logger.info(f"Crawling {response.url}...")
@@ -104,7 +107,7 @@ class CraftbeerShopSpider(scrapy.Spider):
                 loader.add_value("brewery", "")
                 loader.add_value("name", full_name)
                 loader.add_value("available", available)
-                loader.add_value("vendor", self.name)
+                loader.add_value("vendor", self.name.replace("_", " "))
                 loader.add_value("style", style)
                 loader.add_xpath(
                     "product_url", ".//a[contains(@class, 'image-wrapper')]/@href"

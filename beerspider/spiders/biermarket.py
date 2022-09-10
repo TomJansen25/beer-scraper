@@ -1,3 +1,4 @@
+from datetime import datetime
 from loguru import logger
 from scrapy import Request, Spider
 
@@ -9,9 +10,11 @@ class BiermarketSpider(Spider):
     The Bierothek Spider used to crawl Beers from biermarket.de
     """
 
-    name = "Biermarket"
+    name = "biermarket"
     allowed_domains = ["biermarket.de"]
     main_url = "https://www.biermarket.de/"
+    datestamp = datetime.now().strftime("%Y%m%d")
+    timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 
     def start_requests(self):
         urls = [

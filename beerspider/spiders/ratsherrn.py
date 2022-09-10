@@ -1,14 +1,17 @@
-import scrapy
+from scrapy import Spider, Request
+from datetime import datetime
 from loguru import logger
 
 from beerspider.items import ProductItemLoader
 
 
-class RatsherrnSpider(scrapy.Spider):
+class RatsherrnSpider(Spider):
     """Spider to crawl Ratsherrn beers sold directly through the Ratsherrn website"""
 
-    name = "Ratsherrn"
+    name = "ratsherrn"
     main_url = "https://shop.ratsherrn.de/"
+    datestamp = datetime.now().strftime("%Y%m%d")
+    timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 
     def start_requests(self):
         urls = [
@@ -18,7 +21,7 @@ class RatsherrnSpider(scrapy.Spider):
         ]
 
         for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+            yield Request(url=url, callback=self.parse)
 
     def parse(self, response, **kwargs):
         logger.info(f"Crawling {response.url}!")

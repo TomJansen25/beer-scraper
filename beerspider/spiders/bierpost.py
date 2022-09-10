@@ -1,19 +1,22 @@
-import scrapy
+from scrapy import Spider, Request
+from datetime import datetime
 from loguru import logger
 
 from beerspider.items import ProductItemLoader
 
 
-class BierPostSpider(scrapy.Spider):
+class BierPostSpider(Spider):
     """
     The Bierpost Spider used to crawl Beers from biershop.bierpost.com/de/
     """
 
-    name = "BierPost"
+    name = "bierpost"
     allowed_domains = ["biershop.bierpost.com"]
     main_url = "https://biershop.bierpost.com/de/"
     valid_delivery_color = "color:#0cc56d"
     invalid_delivery_color = "color:#ff0000"
+    datestamp = datetime.now().strftime("%Y_%m_%d")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
 
     def start_requests(self):
         urls = [
@@ -106,7 +109,7 @@ class BierPostSpider(scrapy.Spider):
         urls = [f"{url}?s=120" for url in urls]
 
         for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+            yield Request(url=url, callback=self.parse)
 
     def parse(self, response, **kwargs):
         logger.info(f"Crawling {response.url}!")

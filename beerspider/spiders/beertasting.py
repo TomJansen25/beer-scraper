@@ -1,4 +1,5 @@
 from loguru import logger
+from datetime import datetime
 from scrapy import Request, Selector, Spider
 from scrapy.shell import inspect_response
 from scrapy.utils.reactor import install_reactor, verify_installed_reactor
@@ -7,16 +8,21 @@ from scrapy_playwright.page import PageMethod
 
 from beerspider.items import ProductItemLoader, volume_str_to_float
 
-if not verify_installed_reactor(
-    "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
-):
-    logger.info("AsyncioSelectorReactor not installed yet and will be installed...")
-    install_reactor("twisted.internet.asyncioreactor.AsyncioSelectorReactor")
-
 
 class BeertastingSpider(Spider):
-    name = "Beertasting"
+    name = "beertasting"
     main_url = "https://www.beertasting.com/"
+    datestamp = datetime.now().strftime("%Y_%m_%d")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+
+    def __init__(self, **kwargs):
+        if not verify_installed_reactor(
+                "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
+        ):
+            logger.info("AsyncioSelectorReactor not installed yet and will be installed...")
+            install_reactor("twisted.internet.asyncioreactor.AsyncioSelectorReactor")
+
+        super().__init__(**kwargs)
 
     def start_requests(self):
         urls = [
@@ -60,6 +66,8 @@ class BeertastingSpider(Spider):
         logger.info(f"Crawling {response.url}!")
 
         page: Page = response.meta["playwright_page"]
+        # await page.click("//div[contains(@class, 'bts-per-page-select')]//button")
+        # await page.click("//a[@id='bs-select-1-2']")
         page_content = await page.content()
         playwright_selector = Selector(text=page_content)
 
@@ -95,7 +103,7 @@ class BeertastingSpider(Spider):
                     original_price = product.xpath(
                         ".//p[@class='js-discount-price product-price__original']/text()"
                     ).get()
-                    discount = discount_badge.css("span.item-label::text")
+                    discount = discount_badge.css("span.item-label::text").get()
                 else:
                     original_price, discount = None, None
 
@@ -196,10 +204,12 @@ class BeertastingSpider(Spider):
                             method="click",
                             selector="//ul[@class='pagination b-pagination']//li[@class='page-item "
                             "active']/following-sibling::li//a",
-                        ),
+                        )
                     ],
                 ),
             )
+
+        await page.close()
 
     async def errback_close_page(self, failure):
         logger.error(f"The following error occurred: {failure}")

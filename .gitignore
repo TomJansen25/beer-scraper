@@ -9,7 +9,9 @@
 # Notebooks folder
 notebooks
 
-#
+# Data/exports folders
+data/
+exports/
 
 
 ### Python template

@@ -1,3 +1,4 @@
+from datetime import datetime
 from loguru import logger
 from scrapy import Request, Spider
 from scrapy.shell import inspect_response
@@ -9,17 +10,21 @@ from beerspider.items import (
     price_volume_str_to_float,
 )
 
+"""
 if not verify_installed_reactor(
     "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 ):
     logger.info("AsyncioSelectorReactor not installed yet and will be installed...")
     install_reactor("twisted.internet.asyncioreactor.AsyncioSelectorReactor")
+"""
 
 
 class MeibierSpider(Spider):
-    name = "Meibier"
+    name = "meibier"
     allowed_domains = ["meibier.de"]
     main_url = "https://www.meibier.de/"
+    datestamp = datetime.now().strftime("%Y_%m_%d")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
 
     def start_requests(self):
         urls = [

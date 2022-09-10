@@ -1,4 +1,5 @@
 from loguru import logger
+from datetime import datetime
 from scrapy import Request, Selector, Spider
 from scrapy.shell import inspect_response
 
@@ -6,8 +7,10 @@ from beerspider.items import ProductItemLoader
 
 
 class BierlineSpider(Spider):
-    name = "Bierlinie"
+    name = "bierlinie"
     main_url = "https://www.bierlinie-shop.de/"
+    datestamp = datetime.now().strftime("%Y%m%d")
+    timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 
     def start_requests(self):
         urls = [
