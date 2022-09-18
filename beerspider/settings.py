@@ -12,7 +12,7 @@ CONNECTION_STRING = "sqlite:///beer_dev.db"
 
 BOT_NAME = "beerspider"
 
-SPIDER_MODULES = ["beerspider.spiders"]
+SPIDER_MODULES = ["beerspider.spiders", "beerspider.spiders.breweries"]
 NEWSPIDER_MODULE = "beerspider.spiders"
 
 LOG_ENABLED = True

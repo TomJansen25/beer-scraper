@@ -2,7 +2,7 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 
 from beerspider.spiders import (
-    # beertasting,
+    beertasting,
     beyondbeer,
     bierline,
     biermarket,
@@ -10,14 +10,14 @@ from beerspider.spiders import (
     bierpost,
     bierselect,
     craftbeershop,
-    # meibier,
+    meibier,
     ratsherrn,
 )
 
 if __name__ == "__main__":
     settings = get_project_settings()
     process = CrawlerProcess(settings)
-    # process.crawl(beertasting.BeertastingSpider)
+    process.crawl(beertasting.BeertastingSpider)
     process.crawl(beyondbeer.BeyondBeerSpider)
     process.crawl(bierline.BierlineSpider)
     process.crawl(biermarket.BiermarketSpider)
@@ -25,6 +25,6 @@ if __name__ == "__main__":
     process.crawl(bierpost.BierPostSpider)
     process.crawl(bierselect.BierSelectSpider)
     process.crawl(craftbeershop.CraftbeerShopSpider)
-    # process.crawl(meibier.MeibierSpider)
+    process.crawl(meibier.MeibierSpider)
     process.crawl(ratsherrn.RatsherrnSpider)
     process.start()
