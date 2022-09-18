@@ -15,8 +15,8 @@ class BierPostSpider(Spider):
     main_url = "https://biershop.bierpost.com/de/"
     valid_delivery_color = "color:#0cc56d"
     invalid_delivery_color = "color:#ff0000"
-    datestamp = datetime.now().strftime("%Y_%m_%d")
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+    datestamp = datetime.now().strftime("%Y%m%d")
+    timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 
     def start_requests(self):
         urls = [

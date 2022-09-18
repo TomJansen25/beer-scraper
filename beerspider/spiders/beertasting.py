@@ -12,8 +12,8 @@ from beerspider.items import ProductItemLoader, volume_str_to_float
 class BeertastingSpider(Spider):
     name = "beertasting"
     main_url = "https://www.beertasting.com/"
-    datestamp = datetime.now().strftime("%Y_%m_%d")
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+    datestamp = datetime.now().strftime("%Y%m%d")
+    timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 
     def __init__(self, **kwargs):
         if not verify_installed_reactor(
@@ -66,8 +66,6 @@ class BeertastingSpider(Spider):
         logger.info(f"Crawling {response.url}!")
 
         page: Page = response.meta["playwright_page"]
-        # await page.click("//div[contains(@class, 'bts-per-page-select')]//button")
-        # await page.click("//a[@id='bs-select-1-2']")
         page_content = await page.content()
         playwright_selector = Selector(text=page_content)
 
@@ -78,9 +76,6 @@ class BeertastingSpider(Spider):
         logger.info(
             f"Found {num_products} products on page {response.url}, starting to crawl..."
         )
-
-        # products = response.xpath("//div[contains(@class, 'bts-product-item--beer')]")
-        # logger.info(f"Found {len(products)} products on page, starting to crawl...")
 
         success_counter = 0
 

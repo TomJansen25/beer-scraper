@@ -8,9 +8,15 @@ class Brewery(Base):
     __tablename__ = "brewery"
 
     id = Column(Integer, primary_key=True)
+
     name = Column("name", String, nullable=False)
-    url = Column("url", String, nullable=True)
     country = Column("country", String, nullable=True)
+
+    url = Column("url", String, nullable=True)
+    icon_url = Column("image_url", String, nullable=True)
+
+    scraped_from_url = Column("scraped_from_url", String, nullable=False)
+    scrape_datetime = Column("scrape_datetime", DateTime, nullable=False)
 
 
 class Vendor(Base):
