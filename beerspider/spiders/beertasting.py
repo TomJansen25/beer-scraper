@@ -27,21 +27,21 @@ class BeertastingSpider(Spider):
     def start_requests(self):
         urls = [
             "https://www.beertasting.com/de-de/biere/ale-angloamerikanisch",
-            "https://www.beertasting.com/de-de/biere/ale-belgisch",
-            "https://www.beertasting.com/de-de/biere/alkoholfrei",
-            "https://www.beertasting.com/de-de/biere/biermischgetranke",
-            "https://www.beertasting.com/de-de/biere/bock",
-            "https://www.beertasting.com/de-de/biere/cider",
-            "https://www.beertasting.com/de-de/biere/dunkles-lager",
-            "https://www.beertasting.com/de-de/biere/helles-lager",
-            "https://www.beertasting.com/de-de/biere/india-pale-ale",
-            "https://www.beertasting.com/de-de/biere/kreativbier",
-            "https://www.beertasting.com/de-de/biere/nachreifung",
-            "https://www.beertasting.com/de-de/biere/obergarige-leichtbiere",
-            "https://www.beertasting.com/de-de/biere/porter-stout",
-            "https://www.beertasting.com/de-de/biere/sauergarung",
-            "https://www.beertasting.com/de-de/biere/weissbier",
-            "https://www.beertasting.com/de-de/glutenfrei",
+            # "https://www.beertasting.com/de-de/biere/ale-belgisch",
+            # "https://www.beertasting.com/de-de/biere/alkoholfrei",
+            # "https://www.beertasting.com/de-de/biere/biermischgetranke",
+            # "https://www.beertasting.com/de-de/biere/bock",
+            # "https://www.beertasting.com/de-de/biere/cider",
+            # "https://www.beertasting.com/de-de/biere/dunkles-lager",
+            # "https://www.beertasting.com/de-de/biere/helles-lager",
+            # "https://www.beertasting.com/de-de/biere/india-pale-ale",
+            # "https://www.beertasting.com/de-de/biere/kreativbier",
+            # "https://www.beertasting.com/de-de/biere/nachreifung",
+            # "https://www.beertasting.com/de-de/biere/obergarige-leichtbiere",
+            # "https://www.beertasting.com/de-de/biere/porter-stout",
+            # "https://www.beertasting.com/de-de/biere/sauergarung",
+            # "https://www.beertasting.com/de-de/biere/weissbier",
+            # "https://www.beertasting.com/de-de/glutenfrei",
         ]
 
         for url in urls:
@@ -53,9 +53,15 @@ class BeertastingSpider(Spider):
                     playwright_include_page=True,
                     playwright_page_methods=[
                         PageMethod(
-                            method="click",
-                            selector="//div[contains(@class, 'bts-per-page-select')]//button",
+                            method="wait_for_selector",
+                            selector="//div[@class='bts-controls__per-page']",
+                            timeout=15000
                         ),
+                        PageMethod(
+                            method="click",
+                            selector="//div[@class='bts-controls__per-page']//button",
+                        ),
+                        PageMethod(method="wait_for_selector", selector="//a[@id='bs-select-1-2']", timeout=15000),
                         PageMethod(method="click", selector="//a[@id='bs-select-1-2']"),
                     ],
                 ),
@@ -66,6 +72,7 @@ class BeertastingSpider(Spider):
         logger.info(f"Crawling {response.url}!")
 
         page: Page = response.meta["playwright_page"]
+
         page_content = await page.content()
         playwright_selector = Selector(text=page_content)
 
@@ -162,8 +169,8 @@ class BeertastingSpider(Spider):
                 loader.add_value("original_price", original_price)
                 loader.add_value("discount", discount)
 
-                yield loader.load_item()
-                # logger.info(loader.item.__dict__)
+                loader.load_item()
+                logger.info(loader.item.__dict__)
                 success_counter += 1
 
             except Exception as e:
