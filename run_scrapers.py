@@ -17,7 +17,7 @@ from beerspider.spiders import (
 if __name__ == "__main__":
     settings = get_project_settings()
     process = CrawlerProcess(settings)
-    process.crawl(beertasting.BeertastingSpider)
+    # process.crawl(beertasting.BeertastingSpider)
     process.crawl(beyondbeer.BeyondBeerSpider)
     process.crawl(bierline.BierlineSpider)
     process.crawl(biermarket.BiermarketSpider)
