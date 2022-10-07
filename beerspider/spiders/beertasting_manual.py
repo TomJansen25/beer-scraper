@@ -158,7 +158,7 @@ class BeertastingManualSpider:
                     logger.info(page.title())
 
                     page.click("//a[contains(@class, 'cmpboxbtnno')]")
-                    # page.click("//div[@id='country-modal___BV_modal_body_']//button[@class='btn btn-outline-dark']")
+                    page.click("//div[@id='country-modal___BV_modal_body_']//button[@class='btn btn-outline-dark']")
 
                     page.click("//div[contains(@class, 'bts-per-page-select')]//button")
                     page.click("//a[@id='bs-select-1-2']")
@@ -198,7 +198,7 @@ class BeertastingManualSpider:
     def export_results(self):
         datestamp = datetime.now().strftime("%Y%m%d")
         timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
-        save_dir = Path().cwd().joinpath("../../data", datestamp)
+        save_dir = Path().cwd().joinpath("data", datestamp)
         save_dir.mkdir(exist_ok=True)
         with open(
                 save_dir.joinpath(f"beertasting_{timestamp}.json"), "w", encoding="utf-8"
@@ -207,6 +207,6 @@ class BeertastingManualSpider:
 
 
 if __name__ == "__main__":
-    beertasting_spider = BeertastingManualSpider()
+    beertasting_spider = BeertastingManualSpider(scrape_headless=False)
     beertasting_spider.parse_urls()
     beertasting_spider.export_results()

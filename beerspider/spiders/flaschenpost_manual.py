@@ -29,7 +29,7 @@ class FlaschenpostManualSpider:
         for url in self.urls:
             for plz in (10115, ): # 20251, 48151, 60313, 80337):
                 with sync_playwright() as p:
-                    browser = p.chromium.launch(headless=False, slow_mo=500)
+                    browser = p.chromium.launch(headless=self.scrape_headless, slow_mo=500)
                     page = browser.new_page()
                     page.goto(url)
 
@@ -139,7 +139,7 @@ class FlaschenpostManualSpider:
     def export_results(self):
         datestamp = datetime.now().strftime("%Y%m%d")
         timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
-        save_dir = Path().cwd().joinpath("../../data", datestamp)
+        save_dir = Path().cwd().joinpath("data", datestamp)
         save_dir.mkdir(exist_ok=True)
         with open(
                 save_dir.joinpath(f"{self.name}_{timestamp}.json"), "w", encoding="utf-8"
