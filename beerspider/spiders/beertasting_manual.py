@@ -1,12 +1,12 @@
 import json
 
 from loguru import logger
-from pathlib import Path
 from playwright.sync_api import sync_playwright
 from datetime import datetime
 from scrapy import Selector
 
 from beerspider.items import ProductItemLoader, volume_str_to_float
+from beerspider.utils import get_project_dir
 
 
 class BeertastingManualSpider:
@@ -26,7 +26,7 @@ class BeertastingManualSpider:
         "https://www.beertasting.com/de-de/biere/india-pale-ale",
         "https://www.beertasting.com/de-de/biere/kreativbier",
         "https://www.beertasting.com/de-de/biere/nachreifung",
-        "https://www.beertasting.com/de-de/biere/obergarige-leichtbiere",
+        "https://www.beertasting.com/de-de/biere/obergarige-leichtbiere~c1788399",
         "https://www.beertasting.com/de-de/biere/porter-stout",
         "https://www.beertasting.com/de-de/biere/sauergarung~c1788401",
         "https://www.beertasting.com/de-de/biere/weissbier",
@@ -157,9 +157,8 @@ class BeertastingManualSpider:
 
                     logger.info(page.title())
 
-                    page.click("//a[contains(@class, 'cmpboxbtnno')]")
-                    page.click("//div[@id='country-modal___BV_modal_body_']//button[@class='btn btn-outline-dark']")
-
+                    # page.click("//a[contains(@class, 'cmpboxbtnno')]")
+                    # page.click("//div[@id='country-modal___BV_modal_body_']//button[@class='btn btn-outline-dark']")
                     page.click("//div[contains(@class, 'bts-per-page-select')]//button")
                     page.click("//a[@id='bs-select-1-2']")
 
@@ -198,15 +197,15 @@ class BeertastingManualSpider:
     def export_results(self):
         datestamp = datetime.now().strftime("%Y%m%d")
         timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
-        save_dir = Path().cwd().joinpath("data", datestamp)
+        save_dir = get_project_dir().joinpath("data", datestamp)
         save_dir.mkdir(exist_ok=True)
         with open(
-                save_dir.joinpath(f"beertasting_{timestamp}.json"), "w", encoding="utf-8"
+            save_dir.joinpath(f"beertasting_{timestamp}.json"), "w", encoding="utf-8"
         ) as save_file:
             json.dump(self.scraped_products, save_file, ensure_ascii=False, indent=4)
 
 
 if __name__ == "__main__":
-    beertasting_spider = BeertastingManualSpider(scrape_headless=False)
+    beertasting_spider = BeertastingManualSpider()
     beertasting_spider.parse_urls()
     beertasting_spider.export_results()

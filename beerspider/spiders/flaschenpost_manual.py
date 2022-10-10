@@ -1,12 +1,12 @@
 import json
 
 from loguru import logger
-from pathlib import Path
 from playwright.sync_api import sync_playwright
 from datetime import datetime
 from scrapy import Selector
 
 from beerspider.items import ProductItemLoader, volume_str_to_float
+from beerspider.utils import get_project_dir
 
 
 class FlaschenpostManualSpider:
@@ -15,10 +15,18 @@ class FlaschenpostManualSpider:
     scrape_headless = True
     success_counter = 0
 
-    urls = [
+    urls = (
         "https://www.flaschenpost.de/bier/pils",
         "https://www.flaschenpost.de/bier/helles",
-    ]
+        "https://www.flaschenpost.de/bier/alkoholfrei",
+        "https://www.flaschenpost.de/bier/radler-biermix",
+        "https://www.flaschenpost.de/bier/weizenbier",
+        "https://www.flaschenpost.de/bier/koelsch",
+        "https://www.flaschenpost.de/bier/land-kellerbier",
+        "https://www.flaschenpost.de/bier/malzbier",
+        "https://www.flaschenpost.de/bier/internationale-biere",
+        "https://www.flaschenpost.de/bier/spezialitaeten"
+    )
 
     scraped_products: list[dict] = []
 
@@ -27,15 +35,19 @@ class FlaschenpostManualSpider:
 
     def parse_urls(self):
         for url in self.urls:
-            for plz in (10115, ): # 20251, 48151, 60313, 80337):
-                with sync_playwright() as p:
-                    browser = p.chromium.launch(headless=self.scrape_headless, slow_mo=500)
+            for plz in (10115, ):  # 20251, 48151, 60313, 80337):
+                with sync_playwright() as playwrighter:
+                    browser = playwrighter.chromium.launch(
+                        headless=self.scrape_headless, slow_mo=500
+                    )
                     page = browser.new_page()
                     page.goto(url)
 
                     logger.info(page.title())
                     page.locator("//div[@class='zipcode_input_component']//input").fill(str(plz))
-                    page.wait_for_selector("//button[@class='fp_button fp_button_primary fp_button_large']")
+                    page.wait_for_selector(
+                        "//button[@class='fp_button fp_button_primary fp_button_large']"
+                    )
                     page.click("//button[@class='fp_button fp_button_primary fp_button_large']")
                     page.wait_for_selector("//div[@class='fp_product']")
                     page.wait_for_timeout(5000)
@@ -58,8 +70,8 @@ class FlaschenpostManualSpider:
                         self.parse_product(product=product, url=url, on_sale=True)
 
                     logger.info(
-                        f"Finished crawling {url}. "
-                        f"Successfully crawled {self.success_counter} out of {num_products} products!"
+                        f"Finished crawling {url}. Successfully crawled {self.success_counter} "
+                        f"out of {num_products} products!"
                     )
 
     def parse_product(self, product: Selector, url: str, on_sale: bool = False):
@@ -70,7 +82,7 @@ class FlaschenpostManualSpider:
         :param on_sale:
         """
         try:
-            print("parsing...")
+            logger.info("parsing...")
             style = url.split("/")[-1].replace("-", " ").title()
 
             image_url = product.css("a.fp_product_image").attrib.get("href")
@@ -81,7 +93,6 @@ class FlaschenpostManualSpider:
             varieties = product.xpath(
                 ".//div[contains(@class, 'fp_article bottleTypeExists')]"
             )
-            print(str(varieties))
 
             for variety in varieties:
                 loader = ProductItemLoader(selector=product)
@@ -99,7 +110,6 @@ class FlaschenpostManualSpider:
 
                 # TODO: price is currently problematic as it differs per provided PLZ
                 price_eur = variety.css("div.fp_article_price::text").get()
-                print(price_eur)
 
                 total_volume = (
                     variety.css("div.fp_article_bottleInfo::text").get().split("x")
@@ -114,7 +124,7 @@ class FlaschenpostManualSpider:
                     "div.fp_article_pricePerUnit_deposit::text"
                 ).get()
                 price_per_liter = price_per_liter.split(")")[0].replace("(", "")
-                print(price_per_liter)
+                logger.info(f"Price in EUR and per liter: {price_eur}, {price_per_liter}")
 
                 loader.add_value("price_eur", price_eur)
                 loader.add_value("volume_liter", str(volume))
@@ -139,7 +149,7 @@ class FlaschenpostManualSpider:
     def export_results(self):
         datestamp = datetime.now().strftime("%Y%m%d")
         timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
-        save_dir = Path().cwd().joinpath("data", datestamp)
+        save_dir = get_project_dir().joinpath("data", datestamp)
         save_dir.mkdir(exist_ok=True)
         with open(
                 save_dir.joinpath(f"{self.name}_{timestamp}.json"), "w", encoding="utf-8"
