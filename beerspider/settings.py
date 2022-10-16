@@ -12,7 +12,7 @@ CONNECTION_STRING = "sqlite:///beer_dev.db"
 
 BOT_NAME = "beerspider"
 
-SPIDER_MODULES = ["beerspider.spiders", "beerspider.spiders.breweries"]
+SPIDER_MODULES = ["beerspider.spiders.beers", "beerspider.spiders.breweries"]
 NEWSPIDER_MODULE = "beerspider.spiders"
 
 LOG_ENABLED = True
@@ -20,10 +20,10 @@ LOG_FILE = "log.log"
 LOG_FILE_APPEND = False
 
 FEEDS = {
-    'data/%(datestamp)s/%(name)s_%(timestamp)s.json': {
-        'format': 'json',
-        'item_export_kwargs': {
-           'export_empty_fields': True,
+    "data/%(datestamp)s/%(name)s_%(timestamp)s.json": {
+        "format": "json",
+        "item_export_kwargs": {
+            "export_empty_fields": True,
         },
     }
 }

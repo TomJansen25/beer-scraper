@@ -1,7 +1,7 @@
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 
-from beerspider.spiders import (
+from beerspider.spiders.beers import (
     beyondbeer,
     bierline,
     biermarket,
@@ -13,8 +13,8 @@ from beerspider.spiders import (
     ratsherrn,
 )
 
-from beerspider.spiders.beertasting_manual import BeertastingManualSpider
-from beerspider.spiders.flaschenpost_manual import FlaschenpostManualSpider
+from beerspider.spiders.beers.beertasting_manual import BeertastingManualSpider
+from beerspider.spiders.beers.flaschenpost_manual import FlaschenpostManualSpider
 
 if __name__ == "__main__":
 

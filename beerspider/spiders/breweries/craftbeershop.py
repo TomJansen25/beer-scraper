@@ -18,7 +18,11 @@ class CraftbeerShopBrewerySpider(CrawlSpider):
     timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 
     rules = (
-        Rule(LinkExtractor(allow=('Brauereien/', 'brauereien/')), callback='parse', follow=True),
+        Rule(
+            LinkExtractor(allow=("Brauereien/", "brauereien/")),
+            callback="parse",
+            follow=True,
+        ),
     )
 
     def parse(self, response, **kwargs):
@@ -43,9 +47,9 @@ class CraftbeerShopBrewerySpider(CrawlSpider):
             logger.info(name, country, icon_url, scraped_from_url)
 
             yield {
-                'name': name,
-                'country': country,
-                'icon_url': icon_url,
-                'scraped_from_url': scraped_from_url,
+                "name": name,
+                "country": country,
+                "icon_url": icon_url,
+                "scraped_from_url": scraped_from_url,
             }
             success_counter += 1
