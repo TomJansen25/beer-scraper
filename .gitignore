@@ -6,6 +6,9 @@
 # PyCharm folder
 .idea
 
+# VS Code foler
+.vscode
+
 # Notebooks folder
 notebooks
 
