@@ -36,43 +36,46 @@ class FlaschenpostManualSpider:
     def parse_urls(self):
         for url in self.urls:
             for plz in (10115, ):  # 20251, 48151, 60313, 80337):
-                with sync_playwright() as playwrighter:
-                    browser = playwrighter.chromium.launch(
-                        headless=self.scrape_headless, slow_mo=500
-                    )
-                    page = browser.new_page()
-                    page.goto(url)
+                try:
+                    with sync_playwright() as playwrighter:
+                        browser = playwrighter.chromium.launch(
+                            headless=self.scrape_headless, slow_mo=500
+                        )
+                        page = browser.new_page()
+                        page.goto(url)
 
-                    logger.info(page.title())
-                    page.locator("//div[@class='zipcode_input_component']//input").fill(str(plz))
-                    page.wait_for_selector(
-                        "//button[@class='fp_button fp_button_primary fp_button_large']"
-                    )
-                    page.click("//button[@class='fp_button fp_button_primary fp_button_large']")
-                    page.wait_for_selector("//div[@class='fp_product']")
-                    page.wait_for_timeout(5000)
+                        logger.info(page.title())
+                        page.locator("//div[@class='zipcode_input_component']//input").fill(str(plz))
+                        page.wait_for_selector(
+                            "//button[@class='fp_button fp_button_primary fp_button_large']"
+                        )
+                        page.click("//button[@class='fp_button fp_button_primary fp_button_large']")
+                        page.wait_for_selector("//div[@class='fp_product']")
+                        page.wait_for_timeout(5000)
 
-                    page_content = page.content()
-                    selector = Selector(text=page_content)
+                        page_content = page.content()
+                        selector = Selector(text=page_content)
 
-                    products = selector.xpath("//div[@class='fp_product']")
-                    products_on_sale = selector.xpath("//div[@class='fp_product isOffer']")
-                    num_products = len(products + products_on_sale)
-                    logger.info(
-                        f"Found {num_products} products on page {url}, starting to crawl..."
-                    )
-                    self.success_counter = 0
+                        products = selector.xpath("//div[@class='fp_product']")
+                        products_on_sale = selector.xpath("//div[@class='fp_product isOffer']")
+                        num_products = len(products + products_on_sale)
+                        logger.info(
+                            f"Found {num_products} products on page {url}, starting to crawl..."
+                        )
+                        self.success_counter = 0
 
-                    for product in products:
-                        self.parse_product(product=product, url=url)
+                        for product in products:
+                            self.parse_product(product=product, url=url)
 
-                    for product in products_on_sale:
-                        self.parse_product(product=product, url=url, on_sale=True)
+                        for product in products_on_sale:
+                            self.parse_product(product=product, url=url, on_sale=True)
 
-                    logger.info(
-                        f"Finished crawling {url}. Successfully crawled {self.success_counter} "
-                        f"out of {num_products} products!"
-                    )
+                        logger.info(
+                            f"Finished crawling {url}. Successfully crawled {self.success_counter} "
+                            f"out of {num_products} products!"
+                        )
+                except Exception as e:
+                    logger.error(f"ERROR: {e}")
 
     def parse_product(self, product: Selector, url: str, on_sale: bool = False):
         """
