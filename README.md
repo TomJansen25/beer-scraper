@@ -9,7 +9,7 @@ Project to scrape German beer vendors finding the best deals and cheapest option
   - Usage of playwright for dynamic websites is only supported in Unix systems
 
 ## Vendor websites:
-* [Beertasting](https://www.beertasting.com/de-de) - __In progress__
+* [Beertasting](https://www.beertasting.com/de-de) - __Done__
 * [Beerwulf](https://www.beerwulf.com/de-de/) - __To Do__
 * [Beyond Beer](https://www.beyondbeer.de/) - __Done__
 * [Bierlinie](https://www.bierlinie-shop.de/) - __Done__
@@ -18,11 +18,12 @@ Project to scrape German beer vendors finding the best deals and cheapest option
 * [BierPost]() - __In progress__
 * [BierSelect]() - __Done__
 * [Craftbeer Shop](https://www.craftbeer-shop.com/) - __Done__
-* [Flaschenpost](https://www.flaschenpost.de/) - __On hold__
+* [Flaschenpost](https://www.flaschenpost.de/) - __Semi Done__
 * [Hier gibt's Bier](https://www.hier-gibts-bier.de/de/) - __To Do__
 * [Meibier](https://www.meibier.de/) - __Done__
 * [Ratsherrn]() - __Done__
 * [REWE]() - __On Hold__
+* [Holy Craft](https://holycraft.de/) - __To Do__
 
 ### Run scrapers:
 ```shell

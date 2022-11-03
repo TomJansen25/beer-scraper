@@ -44,7 +44,9 @@ class BeertastingManualSpider:
         products = selector.xpath("//div[contains(@class, 'bts-product-item--beer')]")
 
         num_products = len(products)
-        logger.info(f"Found {num_products} products on page {url}, starting to crawl...")
+        logger.info(
+            f"Found {num_products} products on page {url}, starting to crawl..."
+        )
         success_counter = 0
 
         for product in products:
@@ -151,13 +153,15 @@ class BeertastingManualSpider:
         for url in self.urls:
             try:
                 with sync_playwright() as p:
-                    browser = p.chromium.launch(headless=self.scrape_headless, slow_mo=500)
+                    browser = p.chromium.launch(
+                        headless=self.scrape_headless, slow_mo=500
+                    )
                     page = browser.new_page()
                     page.goto(url)
 
                     logger.info(page.title())
 
-                    # page.click("//a[contains(@class, 'cmpboxbtnno')]")
+                    page.click("//a[contains(@class, 'cmpboxbtnno')]")
                     # page.click("//div[@id='country-modal___BV_modal_body_']//button[@class='btn btn-outline-dark']")
                     page.click("//div[contains(@class, 'bts-per-page-select')]//button")
                     page.click("//a[@id='bs-select-1-2']")
@@ -179,7 +183,9 @@ class BeertastingManualSpider:
                         ).getall()
                         other_pages = [int(page) for page in other_pages]
                         if (next_page := current_page + 1) in other_pages:
-                            logger.info(f"Found another page, moving to page {next_page}")
+                            logger.info(
+                                f"Found another page, moving to page {next_page}"
+                            )
                             page.click(
                                 "//ul[@class='pagination b-pagination']//li[@class='page-item active']/"
                                 "following-sibling::li//a"
