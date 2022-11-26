@@ -1,4 +1,6 @@
-SCRAPER_CONTAINER_NAME=beer-scraper/scraper
+SCRAPER_IMAGE_NAME=beer-scraper/scraper
+SCRAPER_CONTAINER_NAME=beer-scraper
+PROJECT_DIR=$HOME/
 
 
 .PHONY: python-format
@@ -14,12 +16,15 @@ scrape-all:
 
 ## --------------------------- DOCKER COMMANDS --------------------------- ##
 
-.PHONY: scrape-container-start
-start-container:
-	sudo docker run -dit -v /mnt/c/Users/tomja/Desktop/Programming/beer-scraper/beer_dev.db:/beer-scraper/beer_dev.db --name $(SCRAPER_CONTAINER_NAME) beer-scraper
-	sudo docker exec -it $(SCRAPER_CONTAINER_NAME) bash
+.PHONY: scraper-docker-build
+scraper-docker-build:
+	docker build -f Dockerfile -t $(SCRAPER_IMAGE_NAME) .
 
-.PHONY: scrape-container-delete
-scrape-container-delete:
-	sudo docker stop $(SCRAPER_CONTAINER_NAME)
-	sudo docker rm $(SCRAPER_CONTAINER_NAME)
+.PHONY: scraper-docker-start
+scraper-docker-start:
+	docker run -dit --name $(SCRAPER_CONTAINER_NAME) $(SCRAPER_IMAGE_NAME):latest
+	docker exec -it $(SCRAPER_CONTAINER_NAME) bash
+
+.PHONY: scraper-docker-delete
+scraper-docker-delete:
+	docker rm --force $(SCRAPER_CONTAINER_NAME)

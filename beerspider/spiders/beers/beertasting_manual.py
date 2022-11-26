@@ -13,6 +13,7 @@ class BeertastingManualSpider:
     name = "beertasting"
     main_url = "https://www.beertasting.com/"
     scrape_headless = True
+    scrape_from_germany = True
 
     urls = [
         "https://www.beertasting.com/de-de/biere/ale-angloamerikanisch",
@@ -35,8 +36,9 @@ class BeertastingManualSpider:
 
     scraped_products: list[dict] = []
 
-    def __init__(self, scrape_headless: bool = True):
+    def __init__(self, scrape_headless: bool = True, scrape_from_germany: bool = True):
         self.scrape_headless = scrape_headless
+        self.scrape_from_germany = scrape_from_germany
 
     def parse_page_content(self, page_content: str, url: str):
         # page_html = html.fromstring(page_content)
@@ -162,7 +164,8 @@ class BeertastingManualSpider:
                     logger.info(page.title())
 
                     page.click("//a[contains(@class, 'cmpboxbtnno')]")
-                    # page.click("//div[@id='country-modal___BV_modal_body_']//button[@class='btn btn-outline-dark']")
+                    if not self.scrape_from_germany:
+                        page.click("//div[@id='country-modal___BV_modal_body_']//button[@class='btn btn-outline-dark']")
                     page.click("//div[contains(@class, 'bts-per-page-select')]//button")
                     page.click("//a[@id='bs-select-1-2']")
 

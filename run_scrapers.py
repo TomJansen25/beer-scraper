@@ -18,7 +18,7 @@ from beerspider.spiders.beers.flaschenpost_manual import FlaschenpostManualSpide
 
 if __name__ == "__main__":
 
-    beertasting_spider = BeertastingManualSpider(scrape_headless=True)
+    beertasting_spider = BeertastingManualSpider(scrape_headless=True, scrape_from_germany=False)
     beertasting_spider.parse_urls()
     beertasting_spider.export_results()
 
