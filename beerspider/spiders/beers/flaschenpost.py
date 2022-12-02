@@ -1,6 +1,7 @@
-from loguru import logger
 from datetime import datetime
-from scrapy import Request, Spider, Selector
+
+from loguru import logger
+from scrapy import Request, Selector, Spider
 from scrapy.shell import inspect_response
 from scrapy.utils.reactor import install_reactor, verify_installed_reactor
 from scrapy_playwright.handler import Page
@@ -19,9 +20,11 @@ class FlaschenpostSpider(Spider):
 
     def __init__(self, **kwargs):
         if not verify_installed_reactor(
-                "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
+            "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
         ):
-            logger.info("AsyncioSelectorReactor not installed yet and will be installed...")
+            logger.info(
+                "AsyncioSelectorReactor not installed yet and will be installed..."
+            )
             install_reactor("twisted.internet.asyncioreactor.AsyncioSelectorReactor")
 
         super().__init__(**kwargs)
@@ -55,11 +58,15 @@ class FlaschenpostSpider(Spider):
 
         page: Page = response.meta["playwright_page"]
 
-        await page.locator("//div[@class='zipcode_input_component']//input").fill("20251")
+        await page.locator("//div[@class='zipcode_input_component']//input").fill(
+            "20251"
+        )
         await page.wait_for_selector(
             "//button[@class='fp_button fp_button_primary fp_button_large']"
         )
-        await page.click("//button[@class='fp_button fp_button_primary fp_button_large']")
+        await page.click(
+            "//button[@class='fp_button fp_button_primary fp_button_large']"
+        )
         await page.wait_for_selector("//div[@class='fp_product']")
         await page.wait_for_timeout(5000)
 

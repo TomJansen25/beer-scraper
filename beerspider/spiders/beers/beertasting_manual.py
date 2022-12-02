@@ -1,8 +1,8 @@
 import json
+from datetime import datetime
 
 from loguru import logger
 from playwright.sync_api import sync_playwright
-from datetime import datetime
 from scrapy import Selector
 
 from beerspider.items import ProductItemLoader, volume_str_to_float
@@ -165,7 +165,9 @@ class BeertastingManualSpider:
 
                     page.click("//a[contains(@class, 'cmpboxbtnno')]")
                     if not self.scrape_from_germany:
-                        page.click("//div[@id='country-modal___BV_modal_body_']//button[@class='btn btn-outline-dark']")
+                        page.click(
+                            "//div[@id='country-modal___BV_modal_body_']//button[@class='btn btn-outline-dark']"
+                        )
                     page.click("//div[contains(@class, 'bts-per-page-select')]//button")
                     page.click("//a[@id='bs-select-1-2']")
 

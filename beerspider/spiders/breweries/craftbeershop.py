@@ -1,8 +1,9 @@
-from scrapy import Spider, Request
-from scrapy.spiders import CrawlSpider, Rule
-from scrapy.linkextractors import LinkExtractor
 from datetime import datetime
+
 from loguru import logger
+from scrapy import Request, Spider
+from scrapy.linkextractors import LinkExtractor
+from scrapy.spiders import CrawlSpider, Rule
 
 
 class CraftbeerShopBrewerySpider(CrawlSpider):

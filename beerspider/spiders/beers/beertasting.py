@@ -1,5 +1,6 @@
-from loguru import logger
 from datetime import datetime
+
+from loguru import logger
 from scrapy import Request, Selector, Spider
 from scrapy.shell import inspect_response
 from scrapy.utils.reactor import install_reactor, verify_installed_reactor
@@ -17,9 +18,11 @@ class BeertastingSpider(Spider):
 
     def __init__(self, **kwargs):
         if not verify_installed_reactor(
-                "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
+            "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
         ):
-            logger.info("AsyncioSelectorReactor not installed yet and will be installed...")
+            logger.info(
+                "AsyncioSelectorReactor not installed yet and will be installed..."
+            )
             install_reactor("twisted.internet.asyncioreactor.AsyncioSelectorReactor")
 
         super().__init__(**kwargs)
@@ -55,13 +58,17 @@ class BeertastingSpider(Spider):
                         PageMethod(
                             method="wait_for_selector",
                             selector="//div[@class='bts-controls__per-page']",
-                            timeout=15000
+                            timeout=15000,
                         ),
                         PageMethod(
                             method="click",
                             selector="//div[@class='bts-controls__per-page']//button",
                         ),
-                        PageMethod(method="wait_for_selector", selector="//a[@id='bs-select-1-2']", timeout=15000),
+                        PageMethod(
+                            method="wait_for_selector",
+                            selector="//a[@id='bs-select-1-2']",
+                            timeout=15000,
+                        ),
                         PageMethod(method="click", selector="//a[@id='bs-select-1-2']"),
                     ],
                 ),

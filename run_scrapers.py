@@ -3,7 +3,7 @@ from scrapy.utils.project import get_project_settings
 
 from beerspider.spiders.beers import (
     beyondbeer,
-    bierline,
+    bierlinie,
     biermarket,
     bierothek,
     bierpost,
@@ -12,13 +12,14 @@ from beerspider.spiders.beers import (
     meibier,
     ratsherrn,
 )
-
 from beerspider.spiders.beers.beertasting_manual import BeertastingManualSpider
 from beerspider.spiders.beers.flaschenpost_manual import FlaschenpostManualSpider
 
 if __name__ == "__main__":
 
-    beertasting_spider = BeertastingManualSpider(scrape_headless=True, scrape_from_germany=False)
+    beertasting_spider = BeertastingManualSpider(
+        scrape_headless=True, scrape_from_germany=True
+    )
     beertasting_spider.parse_urls()
     beertasting_spider.export_results()
 
@@ -29,7 +30,7 @@ if __name__ == "__main__":
     settings = get_project_settings()
     process = CrawlerProcess(settings)
     process.crawl(beyondbeer.BeyondBeerSpider)
-    process.crawl(bierline.BierlineSpider)
+    process.crawl(bierlinie.BierlineSpider)
     process.crawl(biermarket.BiermarketSpider)
     process.crawl(bierothek.BierothekSpider)
     process.crawl(bierpost.BierPostSpider)

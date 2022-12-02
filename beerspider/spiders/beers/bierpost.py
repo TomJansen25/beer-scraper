@@ -1,6 +1,7 @@
-from scrapy import Spider, Request
 from datetime import datetime
+
 from loguru import logger
+from scrapy import Request, Spider
 
 from beerspider.items import ProductItemLoader
 

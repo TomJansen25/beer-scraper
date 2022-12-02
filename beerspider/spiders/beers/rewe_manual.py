@@ -1,12 +1,12 @@
-from math import prod
 import re
-
-from scrapy import Selector
-from playwright.sync_api import sync_playwright
 from datetime import datetime
-from loguru import logger
+from math import prod
 
-from beerspider.items import ProductItemLoader, NUMBER_PATTERN
+from loguru import logger
+from playwright.sync_api import sync_playwright
+from scrapy import Selector
+
+from beerspider.items import NUMBER_PATTERN, ProductItemLoader
 
 
 class ReweShopSpider:

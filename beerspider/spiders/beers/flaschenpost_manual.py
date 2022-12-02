@@ -1,8 +1,8 @@
 import json
+from datetime import datetime
 
 from loguru import logger
 from playwright.sync_api import sync_playwright
-from datetime import datetime
 from scrapy import Selector
 
 from beerspider.items import ProductItemLoader, volume_str_to_float
@@ -25,7 +25,7 @@ class FlaschenpostManualSpider:
         "https://www.flaschenpost.de/bier/land-kellerbier",
         "https://www.flaschenpost.de/bier/malzbier",
         "https://www.flaschenpost.de/bier/internationale-biere",
-        "https://www.flaschenpost.de/bier/spezialitaeten"
+        "https://www.flaschenpost.de/bier/spezialitaeten",
     )
 
     scraped_products: list[dict] = []
@@ -35,7 +35,7 @@ class FlaschenpostManualSpider:
 
     def parse_urls(self):
         for url in self.urls:
-            for plz in (10115, ):  # 20251, 48151, 60313, 80337):
+            for plz in (10115,):  # 20251, 48151, 60313, 80337):
                 try:
                     with sync_playwright() as playwrighter:
                         browser = playwrighter.chromium.launch(
@@ -45,11 +45,15 @@ class FlaschenpostManualSpider:
                         page.goto(url)
 
                         logger.info(page.title())
-                        page.locator("//div[@class='zipcode_input_component']//input").fill(str(plz))
+                        page.locator(
+                            "//div[@class='zipcode_input_component']//input"
+                        ).fill(str(plz))
                         page.wait_for_selector(
                             "//button[@class='fp_button fp_button_primary fp_button_large']"
                         )
-                        page.click("//button[@class='fp_button fp_button_primary fp_button_large']")
+                        page.click(
+                            "//button[@class='fp_button fp_button_primary fp_button_large']"
+                        )
                         page.wait_for_selector("//div[@class='fp_product']")
                         page.wait_for_timeout(5000)
 
@@ -57,7 +61,9 @@ class FlaschenpostManualSpider:
                         selector = Selector(text=page_content)
 
                         products = selector.xpath("//div[@class='fp_product']")
-                        products_on_sale = selector.xpath("//div[@class='fp_product isOffer']")
+                        products_on_sale = selector.xpath(
+                            "//div[@class='fp_product isOffer']"
+                        )
                         num_products = len(products + products_on_sale)
                         logger.info(
                             f"Found {num_products} products on page {url}, starting to crawl..."
@@ -127,7 +133,9 @@ class FlaschenpostManualSpider:
                     "div.fp_article_pricePerUnit_deposit::text"
                 ).get()
                 price_per_liter = price_per_liter.split(")")[0].replace("(", "")
-                logger.info(f"Price in EUR and per liter: {price_eur}, {price_per_liter}")
+                logger.info(
+                    f"Price in EUR and per liter: {price_eur}, {price_per_liter}"
+                )
 
                 loader.add_value("price_eur", price_eur)
                 loader.add_value("volume_liter", str(volume))
@@ -155,7 +163,7 @@ class FlaschenpostManualSpider:
         save_dir = get_project_dir().joinpath("data", datestamp)
         save_dir.mkdir(exist_ok=True)
         with open(
-                save_dir.joinpath(f"{self.name}_{timestamp}.json"), "w", encoding="utf-8"
+            save_dir.joinpath(f"{self.name}_{timestamp}.json"), "w", encoding="utf-8"
         ) as save_file:
             json.dump(self.scraped_products, save_file, ensure_ascii=False, indent=4)
 
