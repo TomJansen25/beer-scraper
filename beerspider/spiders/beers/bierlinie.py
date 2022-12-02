@@ -1,9 +1,11 @@
-from loguru import logger
 from datetime import datetime
+
+from loguru import logger
 from scrapy import Request, Selector, Spider
-from scrapy.shell import inspect_response
 
 from beerspider.items import ProductItemLoader
+
+# from scrapy.shell import inspect_response
 
 
 class BierlineSpider(Spider):
