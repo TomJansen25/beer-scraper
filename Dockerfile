@@ -7,10 +7,9 @@ RUN python3.9 get-pip.py
 RUN apt update && apt install -y pkg-config build-essential
 
 # https://python-poetry.org/docs/master/#installation
-ENV POETRY_VERSION=1.1.13
+ENV POETRY_VERSION=1.2.1
 # Use Poetry currently only to export requirements from pyproject.toml, and thus easy install with pip further below is enough
 # RUN curl -sSL https://install.python-poetry.org | python3.9 - --version "$POETRY_VERSION"
-# ENV PATH="/root/.local/bin:$PATH"
 
 RUN python3.9 -m pip install poetry==$POETRY_VERSION
 

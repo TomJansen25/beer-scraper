@@ -11,7 +11,7 @@ python-format:
 
 .PHONY: scrape-all
 scrape-all:
-	poetry shell && python ./run_scrapers.py
+	poetry run python ./run_scrapers.py
 
 
 ## --------------------------- DOCKER COMMANDS --------------------------- ##

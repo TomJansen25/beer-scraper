@@ -16,7 +16,7 @@ scrapy-playwright = "^0.0.21"
 pandas = "^1.4.4"
 string-grouper = "^0.6.1"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pylint = "^2.12.2"
 black = "^22.1.0"
 mypy = "^0.931"
