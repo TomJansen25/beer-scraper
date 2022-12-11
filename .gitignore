@@ -16,6 +16,9 @@ notebooks
 data/
 exports/
 
+# DS_Store Mac specific file
+.DS_Store
+
 
 ### Python template
 # Byte-compiled / optimized / DLL files
