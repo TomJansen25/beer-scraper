@@ -49,10 +49,10 @@ class FlaschenpostManualSpider:
                             "//div[@class='zipcode_input_component']//input"
                         ).fill(str(plz))
                         page.wait_for_selector(
-                            "//button[@class='fp_button fp_button_primary fp_button_large']"
+                            "//div[contains(@class, 'button_wrapper')]/button[@class='fp_button fp_button_primary fp_button_large']"
                         )
                         page.click(
-                            "//button[@class='fp_button fp_button_primary fp_button_large']"
+                            "//div[contains(@class, 'button_wrapper')]/button[@class='fp_button fp_button_primary fp_button_large']"
                         )
                         page.wait_for_selector("//div[@class='fp_product']")
                         page.wait_for_timeout(5000)

@@ -7,6 +7,7 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+NAME_CONTAINS_EXCLUDE = (" paket ", " pack ", " set ", " package ", "box ")
 
 CONNECTION_STRING = "sqlite:///beer_dev.db"
 

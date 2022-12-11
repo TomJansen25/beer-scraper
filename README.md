@@ -20,10 +20,10 @@ Project to scrape German beer vendors finding the best deals and cheapest option
 * [Craftbeer Shop](https://www.craftbeer-shop.com/) - __Done__
 * [Flaschenpost](https://www.flaschenpost.de/) - __Semi Done__
 * [Hier gibt's Bier](https://www.hier-gibts-bier.de/de/) - __To Do__
+* [Holy Craft](https://holycraft.de/) - __Done__
 * [Meibier](https://www.meibier.de/) - __Done__
 * [Ratsherrn]() - __Done__
 * [REWE]() - __On Hold__
-* [Holy Craft](https://holycraft.de/) - __To Do__
 
 ### Run scrapers:
 ```shell
@@ -36,9 +36,9 @@ or:
 ```shell
 > cd $HOME/beer-scraper/
 > poetry shell
-> scrapy crawl "Beyond Beer"
-> scrapy crawl "Bierothek" 
-> scrapy crawl "Craftbeer Shop"   
+> scrapy crawl "beyond_beer"
+> scrapy crawl "bierothek" 
+> scrapy crawl "craftbeer_shop"   
 ```
 
 
