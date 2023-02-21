@@ -25,7 +25,7 @@ class HolyCraftSpider(Spider):
             "https://holycraft.de/Barley-Wine",
             "https://holycraft.de/Belgische-Stile",
             "https://holycraft.de/Bockbier",
-            "https://holycraft.de/Cider"
+            "https://holycraft.de/Cider",
             "https://holycraft.de/Fassgereift",
             "https://holycraft.de/Fruited",
             "https://holycraft.de/Glutenfreies-Bier",
@@ -63,7 +63,9 @@ class HolyCraftSpider(Spider):
             try:
                 loader = ProductItemLoader(selector=product)
 
-                full_name = product.xpath(".//h4[@class='product-cell__title title']/a/text()").get()
+                full_name = product.xpath(
+                    ".//h4[@class='product-cell__title title']/a/text()"
+                ).get()
                 if any(n in full_name.lower() for n in NAME_CONTAINS_EXCLUDE):
                     continue
                 else:
@@ -74,12 +76,14 @@ class HolyCraftSpider(Spider):
                 available = bool(in_cart)
 
                 loader.add_value("vendor", self.name)
-                loader.add_value("style", response.url.split("/")[-1].replace("?af=50", ""))
+                loader.add_value(
+                    "style", response.url.split("/")[-1].replace("?af=50", "")
+                )
 
                 loader.add_xpath("product_url", ".//a[@class='image-wrapper ']/@href")
                 loader.add_xpath(
-                    "image_url", 
-                    ".//div[contains(@class, 'mediabox-img-wrapper')]/picture/source/img/@data-lowsrc"
+                    "image_url",
+                    ".//div[contains(@class, 'mediabox-img-wrapper')]/picture/source/img/@data-lowsrc",
                 )
 
                 loader.add_value("scraped_from_url", response.url)
@@ -88,14 +92,17 @@ class HolyCraftSpider(Spider):
                 loader.add_value("available", available)
 
                 loader.add_xpath(
-                    "price_eur", ".//strong[@class='price ']/meta[@itemprop='price']/@content"
+                    "price_eur",
+                    ".//strong[@class='price ']/meta[@itemprop='price']/@content",
                 )
                 loader.add_value("volume_liter", volume)
 
                 price_per_100_ml = product.xpath(
                     ".//div[@class='base-price']/meta[@itemprop='price']/@content"
                 ).get()
-                loader.add_value("price_eur_per_liter", str(float(price_per_100_ml) * 10))
+                loader.add_value(
+                    "price_eur_per_liter", str(float(price_per_100_ml) * 10)
+                )
 
                 # loader.add_value("on_sale",)
                 # loader.add_xpath("original_price",)

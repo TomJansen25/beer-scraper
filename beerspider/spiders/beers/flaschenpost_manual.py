@@ -54,7 +54,7 @@ class FlaschenpostManualSpider:
                         page.click(
                             "//div[contains(@class, 'button_wrapper')]/button[@class='fp_button fp_button_primary fp_button_large']"
                         )
-                        page.wait_for_selector("//div[@class='fp_product']")
+                        page.wait_for_selector("//div[contains(@class, 'fp_product')]")
                         page.wait_for_timeout(5000)
 
                         page_content = page.content()
