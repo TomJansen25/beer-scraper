@@ -9,6 +9,7 @@ from beerspider.spiders.beers import (
     bierpost,
     bierselect,
     craftbeershop,
+    hiergibtsbier,
     holycraft,
     meibier,
     ratsherrn,
@@ -19,7 +20,7 @@ from beerspider.spiders.beers.flaschenpost_manual import FlaschenpostManualSpide
 if __name__ == "__main__":
 
     beertasting_spider = BeertastingManualSpider(
-        scrape_headless=True, scrape_from_germany=True
+        scrape_headless=True, scrape_from_germany=False
     )
     beertasting_spider.parse_urls()
     beertasting_spider.export_results()
@@ -37,6 +38,7 @@ if __name__ == "__main__":
     process.crawl(bierpost.BierPostSpider)
     process.crawl(bierselect.BierSelectSpider)
     process.crawl(craftbeershop.CraftbeerShopSpider)
+    process.crawl(hiergibtsbier.HiergibtsbierSpider)
     process.crawl(holycraft.HolyCraftSpider)
     process.crawl(meibier.MeibierSpider)
     process.crawl(ratsherrn.RatsherrnSpider)

@@ -47,7 +47,7 @@ def volume_str_to_float(volume_str: str) -> float:
         volume_liter = volume / 100
     elif "dl" in volume_str:
         volume_liter = volume / 10
-    elif "l" in volume_str or "ltr" in volume_str:
+    elif "l" in volume_str or "ltr" in volume_str or "liter" in volume_str:
         volume_liter = volume
     else:
         volume_liter = volume
@@ -82,6 +82,7 @@ def price_volume_str_to_float(price_str: str) -> float:
         or "pro l" in price_str
         or "liter" in price_str
         or "/ltr" in price_str
+        or "/ 1 Liter" in price_str
     ):
         price = price.amount_float
     else:
