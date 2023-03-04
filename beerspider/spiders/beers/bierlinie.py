@@ -133,6 +133,14 @@ class BierlineSpider(Spider):
             try:
                 loader = ProductItemLoader(selector=product)
 
+                product_name = product.xpath(".//div[@class='thumb-content']//a/text()").get()
+                # Check for names of products to exclude from scraping
+                if any(
+                    n in product_name.lower()
+                    for n in ["paket", "package", "box", "überraschungsbier", "geschenk set"]
+                ):
+                    continue
+
                 style = (
                     response.url.split("/")[-1]
                     .replace("?items=100", "")
@@ -159,11 +167,12 @@ class BierlineSpider(Spider):
                 loader.add_value("vendor", self.name)
                 loader.add_value("style", style)
 
-                loader.add_xpath("name", ".//div[@class='thumb-image']//img/@title")
+                loader.add_value("name", product_name)
+                loader.add_xpath("description", ".//div[@class='thumb-image']//img/@alt")
                 loader.add_value("available", available)
 
                 loader.add_value("product_url", product_url)
-                loader.add_xpath("image_url", ".//div[@class='thumb-image']//img/@src")
+                loader.add_xpath("image_url", ".//div[@class='thumb-image']//source/@srcset")
                 loader.add_value("scraped_from_url", response.url)
 
                 loader.add_xpath(
