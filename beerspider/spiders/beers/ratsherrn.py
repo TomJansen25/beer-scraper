@@ -17,7 +17,7 @@ class RatsherrnSpider(Spider):
     def start_requests(self):
         urls = [
             "https://shop.ratsherrn.de/klassik-linie/",
-            "https://shop.ratsherrn.de/organic-linie/",
+            # "https://shop.ratsherrn.de/organic-linie/",
             "https://shop.ratsherrn.de/kenner-linie/",
         ]
 
@@ -42,6 +42,11 @@ class RatsherrnSpider(Spider):
                 ).get()
                 image_url = images.split(", ")[0] if images else None
 
+                if product.xpath(".//button[@type='submit']/@title").get() == "Auf den Merkzettel":
+                    availability = False
+                else:
+                    availability = True
+
                 loader.add_value("vendor", self.name)
                 loader.add_value("brewery", self.name)
 
@@ -53,7 +58,7 @@ class RatsherrnSpider(Spider):
 
                 loader.add_css("name", "a.product--title::attr(title)")
                 loader.add_css("description", "div.product--description::text")
-                loader.add_value("available", True)
+                loader.add_value("available", availability)
 
                 loader.add_xpath(
                     "price_eur", ".//div[@class='product--price']//span/text()"

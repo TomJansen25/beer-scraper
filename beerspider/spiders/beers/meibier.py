@@ -2,12 +2,11 @@ from datetime import datetime
 
 from loguru import logger
 from scrapy import Request, Spider
-from scrapy.shell import inspect_response
+# from scrapy.shell import inspect_response
 from scrapy.utils.reactor import install_reactor, verify_installed_reactor
 
 from beerspider.items import (
     ProductItemLoader,
-    price_str_to_float,
     price_volume_str_to_float,
 )
 
