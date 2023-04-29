@@ -52,7 +52,14 @@ class HiergibtsbierSpider(Spider):
                 ).get()
                 available = not bool(availability)
 
-                style = response.url.replace("https://www.hier-gibts-bier.de/de/bier-aus-franken/", "").split("/")[0].replace("-", " ").title()
+                style = (
+                    response.url.replace(
+                        "https://www.hier-gibts-bier.de/de/bier-aus-franken/", ""
+                    )
+                    .split("/")[0]
+                    .replace("-", " ")
+                    .title()
+                )
 
                 loader.add_value("vendor", self.name)
                 loader.add_value("style", style)
@@ -73,7 +80,9 @@ class HiergibtsbierSpider(Spider):
                 loader.add_xpath(
                     "volume_liter", ".//div[@class='price--unit']/span[2]/text()"
                 )
-                loader.add_xpath("price_eur_per_liter", ".//div[@class='price--unit']/span[3]/text()")
+                loader.add_xpath(
+                    "price_eur_per_liter", ".//div[@class='price--unit']/span[3]/text()"
+                )
 
                 loader.add_value("on_sale", False)
                 loader.add_value("discount", None)
@@ -85,14 +94,16 @@ class HiergibtsbierSpider(Spider):
             except Exception as e:
                 self.logger.error(f"ERROR.. The following error occurred: {e}")
                 logger.error(f"Error {e} occurred...")
-        
+
         logger.info(
             f"Finished crawling {response.url}. Successfully crawled {success_counter} "
             f"out of {num_products} products!"
         )
 
         # Recursively follow the link to the next page, extracting data from it
-        next_page = response.xpath(".//a[@class='paging--link paging--next' and @title='Nächste Seite']/@href").get()
+        next_page = response.xpath(
+            ".//a[@class='paging--link paging--next' and @title='Nächste Seite']/@href"
+        ).get()
         if next_page is not None:
             next_page = f"{self.main_url[:-1]}{next_page}"
             logger.info(f"Found another page, moving to: {next_page}")

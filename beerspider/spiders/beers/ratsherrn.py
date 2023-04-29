@@ -42,7 +42,10 @@ class RatsherrnSpider(Spider):
                 ).get()
                 image_url = images.split(", ")[0] if images else None
 
-                if product.xpath(".//button[@type='submit']/@title").get() == "Auf den Merkzettel":
+                if (
+                    product.xpath(".//button[@type='submit']/@title").get()
+                    == "Auf den Merkzettel"
+                ):
                     availability = False
                 else:
                     availability = True

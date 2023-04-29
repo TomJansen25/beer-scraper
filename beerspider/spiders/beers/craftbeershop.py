@@ -67,7 +67,9 @@ class CraftbeerShopSpider(Spider):
             try:
                 loader = ProductItemLoader(selector=product)
 
-                title = product.xpath(".//div[contains(@class, 'product-cell__title title')]/a/text()").get()
+                title = product.xpath(
+                    ".//div[contains(@class, 'product-cell__title title')]/a/text()"
+                ).get()
                 full_name = " ".join(title.split(" ")[:-1])
                 volume = title.split(" ")[-1]
 
