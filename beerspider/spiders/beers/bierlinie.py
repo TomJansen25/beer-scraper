@@ -3,9 +3,10 @@ from datetime import datetime
 from loguru import logger
 from scrapy import Request, Selector, Spider
 
-from beerspider.items import ProductItemLoader
-
 # from scrapy.shell import inspect_response
+from scrapy.utils.reactor import install_reactor, verify_installed_reactor
+
+from beerspider.items import ProductItemLoader
 
 
 class BierlineSpider(Spider):
@@ -13,6 +14,17 @@ class BierlineSpider(Spider):
     main_url = "https://www.bierlinie-shop.de/"
     datestamp = datetime.now().strftime("%Y%m%d")
     timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
+
+    def __init__(self, **kwargs):
+        if not verify_installed_reactor(
+            "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
+        ):
+            logger.info(
+                "AsyncioSelectorReactor not installed yet and will be installed..."
+            )
+            install_reactor("twisted.internet.asyncioreactor.AsyncioSelectorReactor")
+
+        super().__init__(**kwargs)
 
     def start_requests(self):
         urls = [
@@ -114,10 +126,10 @@ class BierlineSpider(Spider):
             yield Request(
                 url=url,
                 callback=self.parse,
-                meta={"playwright": True},
+                # meta=dict(playwright=True),
             )
 
-    def parse(self, response, **kwargs):
+    def parse(self, response):
         logger.info(f"Crawling {response.url}!")
 
         # inspect_response(response, self)
@@ -133,11 +145,19 @@ class BierlineSpider(Spider):
             try:
                 loader = ProductItemLoader(selector=product)
 
-                product_name = product.xpath(".//div[@class='thumb-content']//a/text()").get()
+                product_name = product.xpath(
+                    ".//div[@class='thumb-content']//a/text()"
+                ).get()
                 # Check for names of products to exclude from scraping
                 if any(
                     n in product_name.lower()
-                    for n in ["paket", "package", "box", "überraschungsbier", "geschenk set"]
+                    for n in [
+                        "paket",
+                        "package",
+                        "box",
+                        "überraschungsbier",
+                        "geschenk set",
+                    ]
                 ):
                     continue
 
@@ -168,11 +188,15 @@ class BierlineSpider(Spider):
                 loader.add_value("style", style)
 
                 loader.add_value("name", product_name)
-                loader.add_xpath("description", ".//div[@class='thumb-image']//img/@alt")
+                loader.add_xpath(
+                    "description", ".//div[@class='thumb-image']//img/@alt"
+                )
                 loader.add_value("available", available)
 
                 loader.add_value("product_url", product_url)
-                loader.add_xpath("image_url", ".//div[@class='thumb-image']//source/@srcset")
+                loader.add_xpath(
+                    "image_url", ".//div[@class='thumb-image']//source/@srcset"
+                )
                 loader.add_value("scraped_from_url", response.url)
 
                 loader.add_xpath(
