@@ -2,13 +2,11 @@ from datetime import datetime
 
 from loguru import logger
 from scrapy import Request, Spider
+
 # from scrapy.shell import inspect_response
 from scrapy.utils.reactor import install_reactor, verify_installed_reactor
 
-from beerspider.items import (
-    ProductItemLoader,
-    price_volume_str_to_float,
-)
+from beerspider.items import ProductItemLoader, price_volume_str_to_float
 
 
 class MeibierSpider(Spider):
@@ -51,9 +49,7 @@ class MeibierSpider(Spider):
             yield Request(
                 url=url,
                 callback=self.parse,
-                meta=dict(
-                    playwright=True,
-                ),
+                # meta=dict(playwright=True,),
             )
 
     @logger.catch
