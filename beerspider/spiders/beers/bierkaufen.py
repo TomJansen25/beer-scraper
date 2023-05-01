@@ -58,7 +58,7 @@ class BierKaufenSpider(Spider):
                 loader.add_xpath(
                     "description", ".//div[@class='product-description']/text()"
                 )
-                loader.add_value("style", response.url.split("/")[-1])
+                loader.add_value("style", response.url.split("/")[-2])
 
                 loader.add_xpath("product_url", ".//a[@class='product-name']/@href")
                 loader.add_xpath(
@@ -103,8 +103,8 @@ class BierKaufenSpider(Spider):
                 loader.add_value("original_price", original_price)
                 loader.add_value("discount", discount)
 
-                loader.load_item()
-                logger.info(loader.item.__dict__)
+                yield loader.load_item()
+                # logger.info(loader.item.__dict__)
                 success_counter += 1
 
             except Exception as e:
