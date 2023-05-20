@@ -1,32 +1,33 @@
-FROM ubuntu:20.04
+FROM python:3.10.10-bullseye
 
-RUN apt update && apt install -y python3.9 python3.9-dev python3.9-distutils
-RUN apt update && apt install -y curl
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-RUN python3.9 get-pip.py
-RUN apt update && apt install -y pkg-config build-essential
+ENV PLAYWRIGHT_BROWSERS_PATH=/app/ms-playwright
+ENV PYTHONUNBUFFERED=1
+ENV POETRY_VERSION=1.3.1
 
-# https://python-poetry.org/docs/master/#installation
-ENV POETRY_VERSION=1.2.1
-# Use Poetry currently only to export requirements from pyproject.toml, and thus easy install with pip further below is enough
-# RUN curl -sSL https://install.python-poetry.org | python3.9 - --version "$POETRY_VERSION"
+WORKDIR /app
 
-RUN python3.9 -m pip install poetry==$POETRY_VERSION
+RUN apt-get update
+RUN apt-get install -y pkg-config
+
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip install poetry==$POETRY_VERSION
 
 RUN mkdir -p "$HOME"/beer-scraper
 WORKDIR "$HOME"/beer-scraper
 
+COPY ./beerspider "$HOME"/beer-scraper/beerspider
+COPY ./cli "$HOME"/beer-scraper/cli
+COPY Makefile "$HOME"/beer-scraper/
+COPY run_scrapers.py "$HOME"/beer-scraper/
+COPY scrapy.cfg "$HOME"/beer-scraper/
+COPY README.md "$HOME"/beer-scraper/
+
 COPY poetry.lock "$HOME"/beer-scraper/poetry.lock
 COPY pyproject.toml "$HOME"/beer-scraper/pyproject.toml
-RUN poetry config virtualenvs.in-project true --local
-# RUN poetry install --no-dev
-RUN poetry export --without-hashes -f requirements.txt --output requirements.txt
-RUN python3.9 -m pip install --upgrade pip
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-RUN playwright install && playwright install-deps
+RUN poetry config virtualenvs.create false
+RUN poetry install --only main -vvv
 
-COPY ./beerspider "$HOME"/beer-scraper/beerspider
-COPY Makefile "$HOME"/beer-scraper
-COPY run_scrapers.py "$HOME"/beer-scraper
-COPY scrapy.cfg "$HOME"/beer-scraper
+# RUN PLAYWRIGHT_BROWSERS_PATH=/app/ms-playwright 
+RUN poetry run playwright install --with-deps chromium
+
