@@ -94,7 +94,6 @@ class BeertastingSpider(Spider):
         success_counter = 0
 
         for product in products:
-
             try:
                 loader = ProductItemLoader(selector=product)
 

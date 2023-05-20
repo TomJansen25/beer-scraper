@@ -40,7 +40,6 @@ class ReweShopSpider:
         self.scrape_headless = scrape_headless
 
     def parse_page_content(self, page_content: str, url: str):
-
         selector = Selector(text=page_content)
         products = selector.xpath(
             "//div[contains(@class, 'search-service-productDetailsWrapper')]"

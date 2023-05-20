@@ -37,7 +37,6 @@ class CraftbeerShopBrewerySpider(CrawlSpider):
         success_counter = 0
 
         for brewery in breweries:
-
             name = brewery.css("a.subcategory-card__title::text").get()
             country = response.url.split("/")[-1]
 

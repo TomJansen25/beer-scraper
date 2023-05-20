@@ -1,4 +1,5 @@
 import typer
+
 from beerspider.spiders.beers.bierlinie_manual import BierlinieManualSpider
 from beerspider.spiders.beers.flaschenpost_manual import FlaschenpostManualSpider
 from beerspider.spiders.beers.rewe_manual import ReweShopSpider
