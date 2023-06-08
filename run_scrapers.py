@@ -18,7 +18,8 @@ from beerspider.spiders.beers import (
 )
 from beerspider.spiders.beers.beertasting_manual import BeertastingManualSpider
 from beerspider.spiders.beers.bierlinie_manual import BierlinieManualSpider
-from beerspider.spiders.beers.flaschenpost_manual import FlaschenpostManualSpider
+
+# from beerspider.spiders.beers.flaschenpost_manual import FlaschenpostManualSpider
 
 if __name__ == "__main__":
     beertasting_spider = BeertastingManualSpider(
@@ -31,9 +32,9 @@ if __name__ == "__main__":
     bierlinie_spider.parse_urls()
     bierlinie_spider.export_results()
 
-    flaschenpost_spider = FlaschenpostManualSpider(scrape_headless=True)
-    flaschenpost_spider.parse_urls()
-    flaschenpost_spider.export_results()
+    # flaschenpost_spider = FlaschenpostManualSpider(scrape_headless=True)
+    # flaschenpost_spider.parse_urls()
+    # flaschenpost_spider.export_results()
 
     settings = get_project_settings()
     process = CrawlerProcess(settings)
