@@ -28,7 +28,7 @@ duckdb = "^0.8.0"
 pylint = "^2.12.2"
 black = {extras = ["d"], version = "^23.3.0"}
 mypy = "^0.931"
-jupyterlab = "^3.4.5"
+jupyterlab = "^4.0.2"
 ipywidgets = "^8.0.6"
 
 [build-system]
