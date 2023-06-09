@@ -1,5 +1,6 @@
 import typer
 
+from beerspider.spiders.beers.beertasting_manual import BeertastingManualSpider
 from beerspider.spiders.beers.bierlinie_manual import BierlinieManualSpider
 from beerspider.spiders.beers.flaschenpost_manual import FlaschenpostManualSpider
 from beerspider.spiders.beers.rewe_manual import ReweShopSpider
@@ -8,8 +9,12 @@ app = typer.Typer(name="beer-scraper-cli", no_args_is_help=True)
 
 
 @app.command()
-def test_cli():
-    typer.echo("Hi!")
+def run_beertasting_spider(headless: bool = True, scrape_from_germany: bool = True):
+    beertasting_spider = BeertastingManualSpider(
+        scrape_headless=headless, scrape_from_germany=scrape_from_germany
+    )
+    beertasting_spider.parse_urls()
+    beertasting_spider.export_results()
 
 
 @app.command()
