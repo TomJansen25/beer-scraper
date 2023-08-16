@@ -3,7 +3,7 @@ from datetime import datetime
 from loguru import logger
 from scrapy import Request, Spider
 
-from beerspider.items import ProductItemLoader
+from beerspider.items import ProductItemLoader, price_volume_str_to_float
 from beerspider.settings import NAME_CONTAINS_EXCLUDE
 
 
@@ -35,6 +35,7 @@ class HolyCraftSpider(Spider):
             "https://holycraft.de/Lager-Pilsner-Helles",
             "https://holycraft.de/Pale-Ale-Golden-Ale",
             "https://holycraft.de/Porter-Stout",
+            "https://holycraft.de/Radler",
             "https://holycraft.de/Red-Brown-Amber-Ale",
             "https://holycraft.de/Sommer-Biere",
             "https://holycraft.de/Sour-Wild",
@@ -64,7 +65,7 @@ class HolyCraftSpider(Spider):
                 loader = ProductItemLoader(selector=product)
 
                 full_name = product.xpath(
-                    ".//h4[@class='product-cell__title title']/a/text()"
+                    ".//div[contains(@class, 'product-cell__title')]/a/text()"
                 ).get()
                 if any(n in full_name.lower() for n in NAME_CONTAINS_EXCLUDE):
                     continue
@@ -98,11 +99,10 @@ class HolyCraftSpider(Spider):
                 loader.add_value("volume_liter", volume)
 
                 price_per_100_ml = product.xpath(
-                    ".//div[@class='base-price']/meta[@itemprop='price']/@content"
+                    ".//div[contains(@class, 'base-price')]/span/text()"
                 ).get()
-                loader.add_value(
-                    "price_eur_per_liter", str(float(price_per_100_ml) * 10)
-                )
+                price_eur_per_liter = price_volume_str_to_float(price_per_100_ml)
+                loader.add_value("price_eur_per_liter", str(price_eur_per_liter))
 
                 # loader.add_value("on_sale",)
                 # loader.add_xpath("original_price",)

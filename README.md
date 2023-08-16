@@ -15,13 +15,15 @@ Project to scrape German beer vendors finding the best deals and cheapest option
 * [Bierlinie](https://www.bierlinie-shop.de/) - __Done__
 * [Biermarket](https://www.biermarket.de/) - __Done__
 * [Bierothek](https://bierothek.de/) - __Done__
-* [BierPost]() - __In progress__
-* [BierSelect]() - __Done__
+* [BierPost](https://biershop.bierpost.com/de) - __In progress__
+* [BierSelect](https://bierselect.de/) - __Done__
 * [Craftbeer Shop](https://www.craftbeer-shop.com/) - __Done__
 * [Flaschenpost](https://www.flaschenpost.de/) - __Semi Done__
 * [Hier gibt's Bier](https://www.hier-gibts-bier.de/de/) - __To Do__
 * [Holy Craft](https://holycraft.de/) - __Done__
 * [Meibier](https://www.meibier.de/) - __Done__
+* [Mein Biershop](https://www.mein-biershop.de/de/) - __To Do__
+* [Mr Hop](https://www.misterhop.de/) - __To Do__ 
 * [Ratsherrn]() - __Done__
 * [REWE]() - __On Hold__
 
