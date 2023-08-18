@@ -18,6 +18,7 @@ from beerspider.spiders.beers import (
 )
 from beerspider.spiders.beers.beertasting_manual import BeertastingManualSpider
 from beerspider.spiders.beers.bierlinie_manual import BierlinieManualSpider
+from beerspider.spiders.beers.meibier_manual import MeibierManuelSpider
 
 # from beerspider.spiders.beers.flaschenpost_manual import FlaschenpostManualSpider
 
@@ -31,6 +32,10 @@ if __name__ == "__main__":
     bierlinie_spider = BierlinieManualSpider(scrape_headless=True)
     bierlinie_spider.parse_urls()
     bierlinie_spider.export_results()
+
+    meibier_spider = MeibierManuelSpider(scrape_headless=True)
+    meibier_spider.parse_urls()
+    meibier_spider.export_results()
 
     # flaschenpost_spider = FlaschenpostManualSpider(scrape_headless=True)
     # flaschenpost_spider.parse_urls()
@@ -49,6 +54,6 @@ if __name__ == "__main__":
     process.crawl(craftbeershop.CraftbeerShopSpider)
     process.crawl(hiergibtsbier.HiergibtsbierSpider)
     process.crawl(holycraft.HolyCraftSpider)
-    process.crawl(meibier.MeibierSpider)
+    # process.crawl(meibier.MeibierSpider)
     process.crawl(ratsherrn.RatsherrnSpider)
     process.start()

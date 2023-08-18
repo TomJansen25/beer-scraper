@@ -16,16 +16,16 @@ class MeibierSpider(Spider):
     datestamp = datetime.now().strftime("%Y%m%d")
     timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 
-    def __init__(self, **kwargs):
-        if not verify_installed_reactor(
-            "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
-        ):
-            logger.info(
-                "AsyncioSelectorReactor not installed yet and will be installed..."
-            )
-            install_reactor("twisted.internet.asyncioreactor.AsyncioSelectorReactor")
+    # def __init__(self, **kwargs):
+    #     if not verify_installed_reactor(
+    #         "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
+    #     ):
+    #         logger.info(
+    #             "AsyncioSelectorReactor not installed yet and will be installed..."
+    #         )
+    #         install_reactor("twisted.internet.asyncioreactor.AsyncioSelectorReactor")
 
-        super().__init__(**kwargs)
+    #     super().__init__(**kwargs)
 
     def start_requests(self):
         urls = [

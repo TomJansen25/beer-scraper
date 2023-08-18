@@ -3,6 +3,7 @@ import typer
 from beerspider.spiders.beers.beertasting_manual import BeertastingManualSpider
 from beerspider.spiders.beers.bierlinie_manual import BierlinieManualSpider
 from beerspider.spiders.beers.flaschenpost_manual import FlaschenpostManualSpider
+from beerspider.spiders.beers.meibier_manual import MeibierManuelSpider
 from beerspider.spiders.beers.rewe_manual import ReweShopSpider
 
 app = typer.Typer(name="beer-scraper-cli", no_args_is_help=True)
@@ -29,3 +30,10 @@ def run_flaschenpost_spider(headless: bool = True):
     flaschenpost_spider = FlaschenpostManualSpider(scrape_headless=headless)
     flaschenpost_spider.parse_urls()
     flaschenpost_spider.export_results()
+
+
+@app.command()
+def run_meibier_spider(headless: bool = True):
+    meibier_spider = MeibierManuelSpider(scrape_headless=headless)
+    meibier_spider.parse_urls()
+    meibier_spider.export_results()
